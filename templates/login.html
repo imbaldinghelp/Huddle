@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f2f1eb">
+  <title>Sign in | Huddle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <main class="login-shell">
+    <section class="identity-panel" aria-label="SUTD Basketball playbook">
+      <img
+        class="identity-photo"
+        src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1800&q=85"
+        alt="Basketball players competing on court"
+        fetchpriority="high">
+      <div class="photo-wash" aria-hidden="true"></div>
+
+      <div class="brand-lockup" aria-label="Huddle, SUTD Basketball">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span class="brand-copy">
+          <span class="brand-name">HUDDLE</span>
+          <span class="brand-subtitle">SUTD BASKETBALL</span>
+        </span>
+      </div>
+
+      <div class="identity-copy">
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> TEAM PLAYBOOK</p>
+        <h1>Read the floor.<br>Run the play.</h1>
+        <p class="identity-description">One shared picture. Five players moving as one.</p>
+      </div>
+
+      <div class="identity-footer" aria-hidden="true">
+        <span>BUILT FOR THE NEXT POSSESSION</span>
+        <span class="court-mark"><i></i><i></i><i></i><i></i><i></i></span>
+      </div>
+    </section>
+
+    <section class="login-panel" aria-labelledby="login-title">
+      <div class="login-content">
+        <p class="section-kicker">SUTD BASKETBALL <span>/</span> TEAM ACCESS</p>
+        <h2 id="login-title">Welcome back.</h2>
+        <p class="login-intro">Choose your role and enter the team password.</p>
+
+        <form class="login-form" action="/login" method="post">
+          <fieldset class="role-fieldset">
+            <legend>Your role</legend>
+            <div class="role-switch">
+              <input id="role-player" name="role" type="radio" value="player" checked>
+              <label for="role-player">Player</label>
+              <input id="role-coach" name="role" type="radio" value="coach">
+              <label for="role-coach">Coach / Editor</label>
+            </div>
+          </fieldset>
+
+          <div class="password-heading">
+            <label for="password">Team password</label>
+          </div>
+          <div class="password-control">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              aria-describedby="password-help"
+              required>
+            <button class="password-toggle" type="button" aria-controls="password" aria-pressed="false">Show</button>
+          </div>
+          <p class="helper-text" id="password-help" aria-live="polite">Use the shared player password.</p>
+
+          {% if error %}
+          <p class="form-message" role="alert">{{ error }}</p>
+          {% endif %}
+
+          <button class="submit-button" type="submit">
+            <span>Enter playbook</span>
+            <span class="submit-arrow" aria-hidden="true">&#8594;</span>
+          </button>
+        </form>
+
+        <p class="access-note"><span class="access-dot" aria-hidden="true"></span> Private access for SUTD Basketball</p>
+      </div>
+
+      <footer class="login-footer">
+        <span>HUDDLE <span class="footer-divider">/</span> SUTD</span>
+        <span>PLAY TOGETHER</span>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const passwordInput = document.querySelector("#password");
+    const passwordToggle = document.querySelector(".password-toggle");
+    const roleHelp = document.querySelector("#password-help");
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+
+    passwordToggle.addEventListener("click", () => {
+      const isVisible = passwordInput.type === "text";
+      passwordInput.type = isVisible ? "password" : "text";
+      passwordToggle.textContent = isVisible ? "Show" : "Hide";
+      passwordToggle.setAttribute("aria-pressed", String(!isVisible));
+    });
+
+    roleInputs.forEach((roleInput) => {
+      roleInput.addEventListener("change", () => {
+        roleHelp.textContent = roleInput.value === "coach"
+          ? "Use the shared coach and editor password."
+          : "Use the shared player password.";
+      });
+    });
+  </script>
+</body>
+</html>
