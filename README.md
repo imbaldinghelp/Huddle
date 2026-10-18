@@ -32,4 +32,8 @@ If the virtual environment already exists, do not recreate it; activate it and s
 .\.venv\Scripts\python.exe -m flask --app main run --debug
 ```
 
+To Exit:
+```
+deactivate
+```
 
