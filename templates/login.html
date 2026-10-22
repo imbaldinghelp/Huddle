@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,45 +11,38 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
   <main class="login-shell">
-    <section class="identity-panel" aria-label="SUTD Basketball playbook">
+    <section class="identity-panel">
       <img
         class="identity-photo"
-        src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1800&q=85"
+        src="/static/images/sutd_team.jpg"
         alt="Basketball players competing on court"
-        fetchpriority="high">
-      <div class="photo-wash" aria-hidden="true"></div>
+        >
+      <div class="photo-wash"></div>
 
-      <div class="brand-lockup" aria-label="Huddle, SUTD Basketball">
-        <span class="brand-mark" aria-hidden="true">H</span>
+      <div class="brand-lockup">
+        <span class="brand-mark">H</span>
         <span class="brand-copy">
           <span class="brand-name">HUDDLE</span>
-          <span class="brand-subtitle">SUTD BASKETBALL</span>
+          <span class="brand-subtitle">FOR SUTD BASKETBALL</span>
         </span>
       </div>
 
       <div class="identity-copy">
-        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> TEAM PLAYBOOK</p>
-        <h1>Read the floor.<br>Run the play.</h1>
-        <p class="identity-description">One shared picture. Five players moving as one.</p>
-      </div>
-
-      <div class="identity-footer" aria-hidden="true">
-        <span>BUILT FOR THE NEXT POSSESSION</span>
-        <span class="court-mark"><i></i><i></i><i></i><i></i><i></i></span>
+        <h1>SUTD's Playbook</h1>
       </div>
     </section>
 
-    <section class="login-panel" aria-labelledby="login-title">
+    <section class="login-panel">
       <div class="login-content">
-        <p class="section-kicker">SUTD BASKETBALL <span>/</span> TEAM ACCESS</p>
+        <p class="section-kicker"> TEAM ACCESS</p>
         <h2 id="login-title">Welcome back.</h2>
-        <p class="login-intro">Choose your role and enter the team password.</p>
 
-        <form class="login-form" action="/login" method="post">
+        <form class="login-form" action="/login" method="POST">
           <fieldset class="role-fieldset">
-            <legend>Your role</legend>
+            <legend>Your role?</legend>
             <div class="role-switch">
               <input id="role-player" name="role" type="radio" value="player" checked>
               <label for="role-player">Player</label>
@@ -69,7 +63,7 @@
               placeholder="Enter your password"
               aria-describedby="password-help"
               required>
-            <button class="password-toggle" type="button" aria-controls="password" aria-pressed="false">Show</button>
+            <button class="password-toggle" type="button">Show</button>
           </div>
           <p class="helper-text" id="password-help" aria-live="polite">Use the shared player password.</p>
 
@@ -79,16 +73,14 @@
 
           <button class="submit-button" type="submit">
             <span>Enter playbook</span>
-            <span class="submit-arrow" aria-hidden="true">&#8594;</span>
+            <span class="submit-arrow">&#8594;</span>
           </button>
         </form>
-
-        <p class="access-note"><span class="access-dot" aria-hidden="true"></span> Private access for SUTD Basketball</p>
       </div>
 
       <footer class="login-footer">
         <span>HUDDLE <span class="footer-divider">/</span> SUTD</span>
-        <span>PLAY TOGETHER</span>
+        <span>LEARN THE PLAYS!!</span>
       </footer>
     </section>
   </main>
