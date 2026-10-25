@@ -61,11 +61,9 @@
               type="password"
               autocomplete="current-password"
               placeholder="Enter your password"
-              aria-describedby="password-help"
               required>
             <button class="password-toggle" type="button">Show</button>
           </div>
-          <p class="helper-text" id="password-help" aria-live="polite">Use the shared player password.</p>
 
           {% if error %}
           <p class="form-message" role="alert">{{ error }}</p>
@@ -88,22 +86,12 @@
   <script>
     const passwordInput = document.querySelector("#password");
     const passwordToggle = document.querySelector(".password-toggle");
-    const roleHelp = document.querySelector("#password-help");
-    const roleInputs = document.querySelectorAll('input[name="role"]');
 
     passwordToggle.addEventListener("click", () => {
       const isVisible = passwordInput.type === "text";
       passwordInput.type = isVisible ? "password" : "text";
       passwordToggle.textContent = isVisible ? "Show" : "Hide";
       passwordToggle.setAttribute("aria-pressed", String(!isVisible));
-    });
-
-    roleInputs.forEach((roleInput) => {
-      roleInput.addEventListener("change", () => {
-        roleHelp.textContent = roleInput.value === "coach"
-          ? "Use the shared coach and editor password."
-          : "Use the shared player password.";
-      });
     });
   </script>
 </body>
