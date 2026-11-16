@@ -1,0 +1,28 @@
+{# Header shown on every logged-in page. #}
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand-lockup brand-lockup-compact" href="{{ url_for('playbook.index') }}" aria-label="Huddle home">
+      <span class="brand-mark" aria-hidden="true">H</span>
+      <span class="brand-name">HUDDLE</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Account">
+      {# While a temporary password is still in use, every other page redirects here anyway. #}
+      {% if not current_user.must_change_password %}
+        {% if current_user.is_admin %}
+          <a class="site-nav-link" href="{{ url_for('admin.players') }}"
+             {% if request.blueprint == 'admin' %}aria-current="page"{% endif %}>Admin</a>
+        {% endif %}
+        <a class="site-nav-link site-nav-user" href="{{ url_for('auth.change_password') }}"
+           title="Change your password"
+           aria-label="{{ current_user.display_name }}, change password">{{ current_user.display_name }}</a>
+      {% else %}
+        <span class="site-nav-user">{{ current_user.display_name }}</span>
+      {% endif %}
+      <form class="site-nav-form" action="{{ url_for('auth.logout') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="site-nav-link" type="submit">Logout</button>
+      </form>
+    </nav>
+  </div>
+</header>

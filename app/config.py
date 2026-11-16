@@ -1,6 +1,7 @@
 """Settings for the two environments: development (also used by tests) and production."""
 
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -9,13 +10,37 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def database_url():
+    """Return where the database lives.
+
+    DATABASE_URL (for example Neon PostgreSQL) wins when it is set. Otherwise
+    we use a SQLite file inside the instance/ folder, which needs no setup.
+    """
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        return "sqlite:///huddle.db"
+    # Some hosts still hand out the old "postgres://" prefix, which SQLAlchemy rejects.
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+    return url
+
+
 class BaseConfig:
     """Settings shared by every environment."""
+
+    SQLALCHEMY_DATABASE_URI = database_url()
 
     # The session cookie cannot be read by JavaScript, and is not sent when
     # another website makes a request to ours.
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
+
+    # How long someone stays logged in on the same device.
+    PERMANENT_SESSION_LIFETIME = timedelta(days=14)
+
+    # Login attempt counts are kept in memory. Fine for one small server.
+    RATELIMIT_STORAGE_URI = "memory://"
+    LOGIN_RATE_LIMIT = "5 per minute"
 
     # Used only when SECRET_KEY is missing from the environment.
     # None means "there is no fallback, refuse to start".

@@ -1,10 +1,12 @@
-// Show/Hide button next to a password field.
-const passwordInput = document.querySelector("#password");
-const passwordToggle = document.querySelector(".password-toggle");
+// Show/Hide buttons inside password fields.
+// Each button toggles the input that sits in the same .field-control.
+document.querySelectorAll("[data-password-toggle]").forEach((button) => {
+  const input = button.closest(".field-control").querySelector("input");
 
-passwordToggle.addEventListener("click", () => {
-  const isVisible = passwordInput.type === "text";
-  passwordInput.type = isVisible ? "password" : "text";
-  passwordToggle.textContent = isVisible ? "Show" : "Hide";
-  passwordToggle.setAttribute("aria-pressed", String(!isVisible));
+  button.addEventListener("click", () => {
+    const isVisible = input.type === "text";
+    input.type = isVisible ? "password" : "text";
+    button.textContent = isVisible ? "Show" : "Hide";
+    button.setAttribute("aria-pressed", String(!isVisible));
+  });
 });

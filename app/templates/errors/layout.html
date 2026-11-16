@@ -1,0 +1,23 @@
+{# Shared layout for error pages. It uses no database, so it still works when something is broken. #}
+{% extends "base.html" %}
+
+{% block title %}{{ self.heading() }} | Huddle{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/error.css') }}">
+{% endblock %}
+
+{% block body %}
+  <main class="error-page">
+    <a class="brand-lockup brand-lockup-compact" href="{{ url_for('auth.index') }}" aria-label="Huddle home">
+      <span class="brand-mark" aria-hidden="true">H</span>
+      <span class="brand-name">HUDDLE</span>
+    </a>
+    <div class="error-body">
+      <h1 class="page-title">{% block heading %}{% endblock %}</h1>
+      <p class="page-intro">{% block message %}{% endblock %}</p>
+      <a class="button" href="{{ url_for('auth.index') }}">Back to Huddle</a>
+      <p class="error-code">Error {% block code %}{% endblock %}</p>
+    </div>
+  </main>
+{% endblock %}
