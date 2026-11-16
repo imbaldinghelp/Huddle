@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-16T07:12:30+00:00",
+  "generatedAt": "2026-11-16T07:54:22+00:00",
   "title": "Design System: Huddle",
   "extensions": {
     "colorMeta": {
@@ -9,14 +9,14 @@
         "displayName": "Court Orange",
         "canonical": "#e45b35",
         "tonalRamp": [
-          "#371d15",
+          "#351e18",
           "#772610",
           "#aa3717",
           "#de471e",
           "#e7704e",
           "#ee9982",
-          "#e8cac2",
-          "#f7f0ee"
+          "#e5ccc5",
+          "#f7efed"
         ]
       },
       "court-orange-deep": {
@@ -24,14 +24,14 @@
         "displayName": "Court Orange Deep",
         "canonical": "#c54625",
         "tonalRamp": [
-          "#351d17",
+          "#331f19",
           "#712815",
           "#a33a1f",
           "#d44b28",
           "#df7356",
           "#e99b87",
-          "#e6cbc4",
-          "#f6f0ee"
+          "#e3cdc7",
+          "#f7f0ee"
         ]
       },
       "locker-green": {
@@ -39,13 +39,13 @@
         "displayName": "Locker Green",
         "canonical": "#435d4c",
         "tonalRamp": [
-          "#232a25",
+          "#232925",
           "#384e40",
           "#51705c",
           "#699277",
           "#8bab96",
           "#acc4b4",
-          "#d1d9d4",
+          "#d2d9d4",
           "#f1f3f2"
         ]
       },
@@ -54,13 +54,13 @@
         "displayName": "Marker Ink",
         "canonical": "#18231f",
         "tonalRamp": [
-          "#222a27",
+          "#232a27",
           "#375047",
           "#4f7365",
           "#669584",
           "#88ada0",
           "#abc5bc",
-          "#d0dad6",
+          "#d1d9d6",
           "#f1f3f3"
         ]
       },
@@ -69,28 +69,28 @@
         "displayName": "Ink Soft",
         "canonical": "#39463f",
         "tonalRamp": [
-          "#242926",
+          "#242826",
           "#3c4a43",
           "#576a60",
           "#718b7d",
           "#91a59a",
           "#b1bfb7",
-          "#d3d8d5",
+          "#d3d7d5",
           "#f2f3f2"
         ]
       },
       "muted-grey": {
         "role": "neutral",
         "displayName": "Muted Grey",
-        "canonical": "#70776f",
+        "canonical": "#656c64",
         "tonalRamp": [
-          "#262725",
-          "#424641",
+          "#262726",
+          "#414641",
           "#5e645d",
-          "#7a8279",
-          "#989e97",
-          "#b6bab5",
-          "#d4d6d4",
+          "#7a8379",
+          "#989f97",
+          "#b6bbb5",
+          "#d5d6d4",
           "#f2f2f2"
         ]
       },
@@ -99,14 +99,14 @@
         "displayName": "Board White",
         "canonical": "#fffefa",
         "tonalRamp": [
-          "#3c3410",
+          "#393213",
           "#876c00",
           "#c19a00",
           "#fbc900",
           "#ffd737",
           "#ffe371",
-          "#eee4bc",
-          "#f8f6ec"
+          "#eae2c0",
+          "#f9f6ec"
         ]
       },
       "paper": {
@@ -114,14 +114,14 @@
         "displayName": "Paper",
         "canonical": "#f2f1eb",
         "tonalRamp": [
-          "#2b2a22",
+          "#2a2922",
           "#524e35",
           "#756f4c",
           "#989163",
           "#b0aa86",
           "#c7c3a9",
-          "#dad9d0",
-          "#f3f3f1"
+          "#dad8d1",
+          "#f4f3f1"
         ]
       },
       "rule-line": {
@@ -129,28 +129,28 @@
         "displayName": "Rule Line",
         "canonical": "#d9d9d0",
         "tonalRamp": [
-          "#292924",
+          "#282824",
           "#4b4b3c",
           "#6b6b56",
           "#8b8b70",
           "#a5a590",
           "#bfbfb0",
-          "#d8d8d2",
+          "#d7d7d3",
           "#f3f3f2"
         ]
       },
       "field-line": {
         "role": "neutral",
         "displayName": "Field Line",
-        "canonical": "#cfd2c9",
+        "canonical": "#7d857b",
         "tonalRamp": [
-          "#272824",
-          "#454a3d",
-          "#636958",
-          "#818972",
-          "#9ea492",
-          "#babeb2",
-          "#d6d7d3",
+          "#262725",
+          "#424641",
+          "#5e645d",
+          "#7b8379",
+          "#989f97",
+          "#b6bbb5",
+          "#d5d6d4",
           "#f2f3f2"
         ]
       },
@@ -159,13 +159,13 @@
         "displayName": "Track Grey",
         "canonical": "#e9e9e1",
         "tonalRamp": [
-          "#2a2a23",
+          "#292923",
           "#4e4e39",
           "#6f6f52",
           "#91916a",
           "#aaaa8b",
           "#c3c3ad",
-          "#d9d9d1",
+          "#d8d8d2",
           "#f3f3f1"
         ]
       },
@@ -174,13 +174,13 @@
         "displayName": "Photo Green",
         "canonical": "#283b32",
         "tonalRamp": [
-          "#222b26",
+          "#232a26",
           "#365044",
           "#4e7362",
           "#66967f",
           "#88ae9c",
           "#aac6b9",
-          "#d0dad5",
+          "#d1d9d5",
           "#f1f3f2"
         ]
       },
@@ -189,14 +189,14 @@
         "displayName": "Alert Tint",
         "canonical": "#fff0e9",
         "tonalRamp": [
-          "#3c1e10",
+          "#391f13",
           "#872b00",
           "#c13d00",
           "#fb5000",
           "#ff7637",
           "#ff9e71",
-          "#eeccbc",
-          "#f8f0ec"
+          "#eacdc0",
+          "#f9f0ec"
         ]
       },
       "alert-text": {
@@ -204,14 +204,14 @@
         "displayName": "Alert Text",
         "canonical": "#87391f",
         "tonalRamp": [
-          "#341f18",
+          "#32201a",
           "#6e2e19",
           "#9d4224",
           "#cc562f",
           "#da7b5c",
           "#e4a28b",
-          "#e5cdc5",
-          "#f6f0ef"
+          "#e2cfc8",
+          "#f6f0ee"
         ]
       },
       "arrow-peach": {
@@ -219,13 +219,58 @@
         "displayName": "Arrow Peach",
         "canonical": "#f39a73",
         "tonalRamp": [
-          "#391f14",
+          "#362016",
           "#7c2d0b",
           "#b2410f",
           "#e85414",
           "#ef7a46",
           "#f4a17c",
-          "#eacdc0",
+          "#e7cec3",
+          "#f8f0ed"
+        ]
+      },
+      "success-tint": {
+        "role": "neutral",
+        "displayName": "Success Tint",
+        "canonical": "#e6eee8",
+        "tonalRamp": [
+          "#232a24",
+          "#37503d",
+          "#4e7357",
+          "#669672",
+          "#88ae91",
+          "#aac5b1",
+          "#d1d9d3",
+          "#f1f3f2"
+        ]
+      },
+      "success-text": {
+        "role": "neutral",
+        "displayName": "Success Text",
+        "canonical": "#2f4a39",
+        "tonalRamp": [
+          "#222b25",
+          "#34523f",
+          "#4b765b",
+          "#629a76",
+          "#84b195",
+          "#a8c8b4",
+          "#d0dad4",
+          "#f1f4f2"
+        ]
+      },
+      "selection-peach": {
+        "role": "neutral",
+        "displayName": "Selection Peach",
+        "canonical": "#f6cfc0",
+        "tonalRamp": [
+          "#352018",
+          "#762d11",
+          "#a94018",
+          "#dc541f",
+          "#e67950",
+          "#eda083",
+          "#e5cec5",
           "#f7f0ed"
         ]
       }
@@ -254,6 +299,14 @@
       "kicker": {
         "displayName": "Kicker",
         "purpose": "Small capital labels above headings."
+      },
+      "page-title": {
+        "displayName": "Page title",
+        "purpose": "Heading of every logged-in page."
+      },
+      "input": {
+        "displayName": "Input",
+        "purpose": "Text typed into fields."
       }
     },
     "shadows": [
@@ -264,7 +317,7 @@
       },
       {
         "name": "focus-glow",
-        "value": "0 0 0 3px rgba(67, 93, 76, 0.12)",
+        "value": "0 0 0 3px rgba(67, 93, 76, 0.24)",
         "purpose": "Ring around a focused field."
       }
     ],
@@ -286,7 +339,7 @@
       },
       {
         "name": "small-phone",
-        "value": "380px"
+        "value": "420px"
       }
     ]
   },
@@ -297,7 +350,7 @@
       "refersTo": "button-primary",
       "description": "The one main action on a form.",
       "html": "<button class=\"ds-btn-primary\"><span>Enter playbook</span><span class=\"ds-btn-arrow\">&#8594;</span></button>",
-      "css": ".ds-btn-primary { display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: space-between; padding: 0 17px; border: 0; background: var(--ink); color: white; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; transition: background-color 160ms ease; } .ds-btn-primary:hover { background: var(--green); } .ds-btn-primary:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; } .ds-btn-arrow { color: #f39a73; font-size: 20px; line-height: 1; transition: transform 160ms ease; } .ds-btn-primary:hover .ds-btn-arrow { transform: translateX(3px); }"
+      "css": ".ds-btn-primary { display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: space-between; padding: 0 17px; border: 0; background: var(--ink); color: var(--white); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; transition: background-color 160ms ease; } .ds-btn-primary:hover { background: var(--green); } .ds-btn-primary:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; } .ds-btn-arrow { color: var(--arrow-peach); font-size: 20px; line-height: 1; transition: transform 160ms ease; } .ds-btn-primary:hover .ds-btn-arrow { transform: translateX(3px); }"
     },
     {
       "name": "Field",
@@ -305,7 +358,7 @@
       "refersTo": "input-field",
       "description": "Text or password field with an optional action inside.",
       "html": "<div class=\"ds-field\"><input type=\"password\" placeholder=\"Enter your password\"><button type=\"button\">Show</button></div>",
-      "css": ".ds-field { display: flex; min-height: 50px; align-items: center; border: 1px solid #cfd2c9; background: var(--white); transition: border-color 160ms ease, box-shadow 160ms ease; } .ds-field:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(67, 93, 76, 0.12); } .ds-field input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 0; outline: 0; background: transparent; color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 13px; } .ds-field button { min-width: 57px; align-self: stretch; padding: 0 12px; border: 0; background: transparent; color: var(--green); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; } .ds-field button:hover { color: var(--orange-dark); }"
+      "css": ".ds-field { display: flex; min-height: 50px; align-items: center; border: 1px solid var(--field-line); background: var(--white); transition: border-color 160ms ease, box-shadow 160ms ease; } .ds-field:focus-within { border-color: var(--green); box-shadow: var(--focus-glow); } .ds-field input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 0; outline: 0; background: transparent; color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 16px; } .ds-field button { min-width: 57px; align-self: stretch; padding: 0 12px; border: 0; background: transparent; color: var(--green); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; } .ds-field button:hover { color: var(--orange-dark); }"
     },
     {
       "name": "Segmented Options",
@@ -313,7 +366,7 @@
       "refersTo": "segmented-option",
       "description": "Choose one of two options.",
       "html": "<div class=\"ds-segmented\"><span class=\"ds-segmented-on\">Player</span><span>Coach / Editor</span></div>",
-      "css": ".ds-segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 4px; background: #e9e9e1; } .ds-segmented span { display: grid; min-height: 42px; place-items: center; padding: 8px 10px; color: #69716a; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; } .ds-segmented .ds-segmented-on { background: var(--white); color: var(--ink); box-shadow: 0 1px 4px rgba(24, 35, 31, 0.12); }"
+      "css": ".ds-segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 4px; background: var(--track); } .ds-segmented span { display: grid; min-height: 42px; place-items: center; padding: 8px 10px; color: var(--ink-soft); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; } .ds-segmented .ds-segmented-on { background: var(--white); color: var(--ink); box-shadow: var(--shadow-lift); }"
     },
     {
       "name": "Form Message",
@@ -321,7 +374,7 @@
       "refersTo": "form-message",
       "description": "Error or notice shown under a form field.",
       "html": "<p class=\"ds-form-message\" role=\"alert\">Wrong username or password.</p>",
-      "css": ".ds-form-message { margin: 0; padding: 10px 12px; border-left: 3px solid var(--orange); background: #fff0e9; color: #87391f; font-family: 'DM Sans', sans-serif; font-size: 12px; line-height: 1.5; }"
+      "css": ".ds-form-message { margin: 0; padding: 10px 12px; border-left: 3px solid var(--orange); background: var(--alert-tint); color: var(--alert-text); font-family: 'DM Sans', sans-serif; font-size: 12px; line-height: 1.5; }"
     },
     {
       "name": "Brand Lockup",
@@ -329,15 +382,39 @@
       "refersTo": "brand-mark",
       "description": "Orange H mark with the HUDDLE wordmark.",
       "html": "<span class=\"ds-brand\"><span class=\"ds-brand-mark\">H</span><span class=\"ds-brand-name\">HUDDLE</span></span>",
-      "css": ".ds-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); } .ds-brand-mark { display: grid; width: 42px; aspect-ratio: 1; place-items: center; background: var(--orange); color: white; font-family: var(--display-font); font-size: 30px; font-weight: 700; line-height: 1; } .ds-brand-name { font-family: var(--display-font); font-size: 25px; font-weight: 700; line-height: 0.95; }"
+      "css": ".ds-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); } .ds-brand-mark { display: grid; width: 42px; aspect-ratio: 1; place-items: center; background: var(--orange); color: var(--white); font-family: var(--display-font); font-size: 30px; font-weight: 700; line-height: 1; } .ds-brand-name { font-family: var(--display-font); font-size: 25px; font-weight: 700; line-height: 0.95; }"
     },
     {
       "name": "Kicker Label",
       "kind": "custom",
       "refersTo": "kicker",
-      "description": "Small capital label above a heading.",
+      "description": "Small capital label above the login heading. Login page only.",
       "html": "<p class=\"ds-kicker\">TEAM ACCESS</p>",
       "css": ".ds-kicker { margin: 0; color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; }"
+    },
+    {
+      "name": "Compact Button",
+      "kind": "button",
+      "refersTo": "button-compact",
+      "description": "Page actions and links that act as buttons.",
+      "html": "<button class=\"ds-btn-compact\">Add player</button>",
+      "css": ".ds-btn-compact { display: inline-flex; min-height: 44px; align-items: center; padding: 0 18px; border: 1px solid var(--ink); background: var(--ink); color: var(--white); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; transition: background-color 160ms ease, border-color 160ms ease; } .ds-btn-compact:hover { border-color: var(--green); background: var(--green); } .ds-btn-compact:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Secondary and repeated actions in lists.",
+      "html": "<button class=\"ds-btn-quiet\">Reset password</button>",
+      "css": ".ds-btn-quiet { display: inline-flex; min-height: 44px; align-items: center; padding: 0 18px; border: 1px solid var(--field-line); background: var(--white); color: var(--ink); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700; transition: border-color 160ms ease; } .ds-btn-quiet:hover { border-color: var(--ink); } .ds-btn-quiet:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Small role or state label.",
+      "html": "<span class=\"ds-tag\">Admin</span> <span class=\"ds-tag ds-tag-muted\">Deactivated</span>",
+      "css": ".ds-tag { display: inline-block; padding: 3px 7px; background: var(--green); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; line-height: 1.4; } .ds-tag-muted { background: var(--track); color: var(--ink-soft); }"
     }
   ],
   "narrative": {
@@ -358,7 +435,7 @@
       },
       {
         "name": "The Tokens Only Rule",
-        "body": "Colours and fonts are defined in `app/static/css/tokens.css` and used through `var(--name)`. Several neutrals above are still written as hex values in the login CSS; move them into `tokens.css` the first time a second page needs them.",
+        "body": "Colours, fonts and shadows are defined in `app/static/css/tokens.css` and used through `var(--name)`. The one exception is the dark gradient over the login photo, which lives in `pages/login.css`.",
         "section": "colors"
       },
       {
@@ -384,7 +461,8 @@
       "Do keep controls at least 42px tall so they are easy to tap on a phone.",
       "Do keep the 2px Court Orange focus outline on anything that can be focused.",
       "Do respect `prefers-reduced-motion`; transitions are 160ms and only change colour or nudge position.",
-      "Do check contrast on new pages. Small grey text (9px to 10px footer and kicker text, placeholder text) and orange text on Board White are below WCAG AA today; use Marker Ink, Ink Soft or Locker Green for text people need to read."
+      "Do keep text at WCAG AA contrast (4.5:1). Marker Ink, Ink Soft, Locker Green and Muted Grey all pass on Board White and Paper. Court Orange does not pass as text: use Court Orange Deep or Alert Text.",
+      "Do give repeated buttons a full `aria-label` (\"Deactivate Wei Jie\"), so screen readers can tell the rows apart."
     ],
     "donts": [
       "Don't use purple, gradients as decoration, or any accent colour other than Court Orange.",
@@ -393,7 +471,9 @@
       "Don't use heavy or coloured drop shadows.",
       "Don't set body text, labels or controls in Barlow Condensed.",
       "Don't use pure black (`#000`) or pure white (`#fff`) for surfaces.",
-      "Don't fill large areas with Court Orange."
+      "Don't fill large areas with Court Orange.",
+      "Don't add a kicker label above headings on new pages.",
+      "Don't set field text below 16px."
     ]
   }
 }

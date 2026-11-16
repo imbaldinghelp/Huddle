@@ -1,0 +1,10 @@
+{# One-off messages set with flash() in a route, e.g. "Your password has been changed." #}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-list" role="status">
+      {% for category, message in messages %}
+        <p class="form-message{% if category == 'success' %} form-message-success{% endif %}">{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}

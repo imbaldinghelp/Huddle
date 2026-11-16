@@ -7,16 +7,19 @@ colors:
   locker-green: "#435d4c"
   marker-ink: "#18231f"
   ink-soft: "#39463f"
-  muted-grey: "#70776f"
+  muted-grey: "#656c64"
   board-white: "#fffefa"
   paper: "#f2f1eb"
   rule-line: "#d9d9d0"
-  field-line: "#cfd2c9"
+  field-line: "#7d857b"
   track-grey: "#e9e9e1"
   photo-green: "#283b32"
   alert-tint: "#fff0e9"
   alert-text: "#87391f"
   arrow-peach: "#f39a73"
+  success-tint: "#e6eee8"
+  success-text: "#2f4a39"
+  selection-peach: "#f6cfc0"
 typography:
   display:
     fontFamily: "Barlow Condensed, Arial Narrow, sans-serif"
@@ -26,6 +29,11 @@ typography:
   headline:
     fontFamily: "Barlow Condensed, Arial Narrow, sans-serif"
     fontSize: "54px"
+    fontWeight: 600
+    lineHeight: 1
+  page-title:
+    fontFamily: "Barlow Condensed, Arial Narrow, sans-serif"
+    fontSize: "48px"
     fontWeight: 600
     lineHeight: 1
   title:
@@ -38,6 +46,10 @@ typography:
     fontSize: "13px"
     fontWeight: 400
     lineHeight: 1.6
+  input:
+    fontFamily: "DM Sans, sans-serif"
+    fontSize: "16px"
+    fontWeight: 400
   label:
     fontFamily: "DM Sans, sans-serif"
     fontSize: "12px"
@@ -58,23 +70,40 @@ spacing:
 components:
   button-primary:
     backgroundColor: "{colors.marker-ink}"
-    textColor: "#ffffff"
+    textColor: "{colors.board-white}"
     typography: "{typography.label}"
     rounded: "{rounded.none}"
     padding: "0 17px"
     height: "52px"
   button-primary-hover:
     backgroundColor: "{colors.locker-green}"
+  button-compact:
+    backgroundColor: "{colors.marker-ink}"
+    textColor: "{colors.board-white}"
+    rounded: "{rounded.none}"
+    padding: "0 18px"
+    height: "44px"
+  button-quiet:
+    backgroundColor: "{colors.board-white}"
+    textColor: "{colors.marker-ink}"
+    rounded: "{rounded.none}"
+    padding: "0 18px"
+    height: "44px"
+  tag:
+    backgroundColor: "{colors.locker-green}"
+    textColor: "{colors.board-white}"
+    rounded: "{rounded.none}"
+    padding: "3px 7px"
   input-field:
     backgroundColor: "{colors.board-white}"
     textColor: "{colors.marker-ink}"
-    typography: "{typography.body}"
+    typography: "{typography.input}"
     rounded: "{rounded.none}"
     padding: "0 14px"
     height: "50px"
   segmented-option:
     backgroundColor: "{colors.track-grey}"
-    textColor: "#69716a"
+    textColor: "{colors.ink-soft}"
     rounded: "{rounded.none}"
     padding: "8px 10px"
     height: "42px"
@@ -88,7 +117,7 @@ components:
     padding: "10px 12px"
   brand-mark:
     backgroundColor: "{colors.court-orange}"
-    textColor: "#ffffff"
+    textColor: "{colors.board-white}"
     rounded: "{rounded.none}"
     size: "42px"
 ---
@@ -124,20 +153,22 @@ A warm paper-and-ink palette with a deep court green and one orange accent. Ever
 ### Neutral
 - **Marker Ink** (`marker-ink`, CSS `--ink`): main text and the primary button.
 - **Ink Soft** (`ink-soft`, CSS `--ink-soft`): secondary text that still needs to read clearly.
-- **Muted Grey** (`muted-grey`, CSS `--muted`): helper text and notes.
+- **Muted Grey** (`muted-grey`, CSS `--muted`): small supporting text such as dates and placeholders. It passes AA on both Board White and Paper.
 - **Board White** (`board-white`, CSS `--white`): the main working surface and text on dark areas.
 - **Paper** (`paper`, CSS `--paper`): the page background behind the board.
 - **Rule Line** (`rule-line`, CSS `--line`): dividers.
-- **Field Line** (`field-line`): input borders.
-- **Track Grey** (`track-grey`): the track behind segmented options.
-- **Photo Green** (`photo-green`): the fallback colour behind the team photo.
-- **Alert Tint / Alert Text** (`alert-tint`, `alert-text`): background and text of form messages.
+- **Field Line** (`field-line`, CSS `--field-line`): borders of inputs and quiet buttons. Dark enough (3:1) to show where a control is.
+- **Track Grey** (`track-grey`, CSS `--track`): the track behind segmented options and quiet tags.
+- **Photo Green** (`photo-green`, CSS `--photo-green`): the fallback colour behind the team photo.
+- **Alert Tint / Alert Text** (`alert-tint`, `alert-text`): background and text of error messages.
+- **Success Tint / Success Text** (`success-tint`, `success-text`): background and text of confirmation messages.
 - **Arrow Peach** (`arrow-peach`): the arrow on the dark primary button only.
+- **Selection Peach** (`selection-peach`, CSS `--selection`): highlighted text.
 
 ### Named Rules
 **The One Marker Rule.** Orange is the only loud colour. It marks one or two small things per screen (brand mark, focus, an alert edge). It is never a page background, a card fill or a gradient.
 
-**The Tokens Only Rule.** Colours and fonts are defined in `app/static/css/tokens.css` and used through `var(--name)`. Several neutrals above are still written as hex values in the login CSS; move them into `tokens.css` the first time a second page needs them.
+**The Tokens Only Rule.** Colours, fonts and shadows are defined in `app/static/css/tokens.css` and used through `var(--name)`. The one exception is the dark gradient over the login photo, which lives in `pages/login.css`.
 
 ## Typography
 
@@ -149,10 +180,12 @@ A warm paper-and-ink palette with a deep court green and one orange accent. Ever
 ### Hierarchy
 - **Display** (600, 76px, line-height 0.91; 64px under 1000px, 43px under 720px): the one big statement on a photo or hero area.
 - **Headline** (600, 54px, line-height 1; 48px under 720px): the page heading, for example "Welcome back."
-- **Title** (700, 25px, line-height 0.95): the HUDDLE wordmark; the size for card and section titles.
-- **Body** (400, 13px to 14px, line-height 1.6): descriptions, notes, field text.
+- **Page title** (600, 48px, line-height 1; 40px under 720px): the heading of every logged-in page, for example "Players."
+- **Title** (700, 25px, line-height 0.95): the HUDDLE wordmark (22px in the header); the size for card and section titles.
+- **Body** (400, 13px to 14px, line-height 1.6): descriptions, notes, list text.
+- **Input** (400, 16px): text typed into fields. 16px stops iPhones from zooming in on focus.
 - **Label** (700, 12px): field labels and button text. Segmented options use 600.
-- **Kicker** (700, 10px, typed in capitals): small labels above a heading, such as "TEAM ACCESS". Footer text uses the same style at 9px.
+- **Kicker** (700, 10px, typed in capitals): the "TEAM ACCESS" label on the login page. Footer text uses the same style at 9px. Tags use 11px bold.
 
 ### Named Rules
 **The Two Voices Rule.** Barlow Condensed is for headings and the wordmark only. Anything longer than a short line, and every control, is DM Sans.
@@ -167,6 +200,8 @@ The login page is a two-panel split: team photo on the left (1.08 parts), the bo
 - **Under 720px:** the panels stack. The photo becomes a 265px banner on top and the form fills the rest with 24px side padding.
 - **Under 380px:** side padding drops to 19px. The minimum supported width is 320px.
 
+Logged-in pages share one shell: a 60px Board White header with a bottom Rule Line, then the content on Paper in a 960px column with 24px side padding (16px under 420px). Form pages use a narrow 438px column so the form is 390px wide, the same as on the login page. Lists sit in a Board White block with 1px Rule Line borders; on phones each row stacks into one column.
+
 Spacing follows the form's rhythm: 4px inside controls, 10px between a label and its field, 14px inside fields, 26px between form groups, 38px between a heading and the form, 48px as panel padding. Controls are tall enough to tap: 42px options, 50px fields, 52px buttons.
 
 ## Elevation & Depth
@@ -174,8 +209,8 @@ Spacing follows the form's rhythm: 4px inside controls, 10px between a label and
 Mostly flat. Surfaces are separated by tone (Board White on Paper, Track Grey behind options) and by thin 1px lines. Light shadows are allowed, kept soft and tinted with Marker Ink, to show that something is selected or sits above the page (a selected option, a card, a menu). Depth on the photo comes from a dark gradient wash that keeps white text readable.
 
 ### Shadow Vocabulary
-- **Selected lift** (`box-shadow: 0 1px 4px rgba(24, 35, 31, 0.12)`): the selected segmented option. Use the same strength for raised cards.
-- **Focus glow** (`box-shadow: 0 0 0 3px rgba(67, 93, 76, 0.12)`): the ring around a focused field, with a Locker Green border.
+- **Selected lift** (`box-shadow: 0 1px 4px rgba(24, 35, 31, 0.12)`, CSS `--shadow-lift`): the selected segmented option. Use the same strength for raised cards.
+- **Focus glow** (`box-shadow: 0 0 0 3px rgba(67, 93, 76, 0.24)`, CSS `--focus-glow`): the ring around a focused field, with a Locker Green border.
 
 ### Named Rules
 **The Light Touch Rule.** A shadow is never darker than 12% Marker Ink and never wider than a few pixels. If a surface needs a heavy shadow to stand out, change its background tone or add a line.
@@ -188,27 +223,41 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 
 ### Buttons
 - **Shape:** square (0 radius), full width of the form, 52px tall.
-- **Primary:** Marker Ink background, white 12px bold label on the left, Arrow Peach arrow on the right, 17px side padding.
+- **Primary:** Marker Ink background, Board White 13px bold label on the left, Arrow Peach arrow on the right, 17px side padding.
 - **Hover / Focus:** background changes to Locker Green over 160ms and the arrow moves 3px right. Focus shows a 2px Court Orange outline, 3px away from the button.
-- **Text button:** no background, Locker Green 11px bold text (Show/Hide); Court Orange Deep on hover.
+- **Compact:** 44px tall, 18px side padding, Marker Ink background, no arrow. For page actions such as "Add player" and links that act as buttons. Sizes to its label.
+- **Quiet:** the compact button in Board White with a Field Line border and Marker Ink text; the border turns Marker Ink on hover. For secondary and repeated actions such as "Reset password" in a list.
+- **Text button:** no background, Locker Green 12px bold text (Show/Hide); Court Orange Deep on hover.
 
 ### Segmented Options
-- **Style:** two equal options on a Track Grey track with 4px padding and a 3px gap. Each option is 42px tall, 12px, weight 600, grey text.
+- **Style:** two equal options on a Track Grey track with 4px padding and a 3px gap. Each option is 42px tall, 12px, weight 600, Ink Soft text. Class `.segmented`; not used on a page yet.
 - **State:** the selected option turns Board White with Marker Ink text and the Selected lift shadow. Keyboard focus shows a 2px Court Orange outline.
 
 ### Inputs / Fields
-- **Style:** Board White, 1px Field Line border, square, 50px tall, 13px text, 14px side padding. An action such as Show/Hide can sit inside the field on the right.
+- **Style:** a 12px bold label above a Board White box with a 1px Field Line border, square, 50px tall, 16px text, 14px side padding. An action such as Show/Hide can sit inside the field on the right. Build fields with the `text_field` macro in `templates/components/forms.html`.
+- **Hint:** 12px Ink Soft text under the field.
 - **Focus:** the border turns Locker Green with the Focus glow ring.
-- **Error:** shown below the field as a form message, not as a red border.
+- **Error:** the border turns Court Orange Deep and a 12px bold Alert Text message replaces the hint. An error that belongs to the whole form (for example a wrong login) is a form message above the button.
 
 ### Form Message
-- **Style:** Alert Tint background, Alert Text 12px text, 3px Court Orange left edge, 10px by 12px padding, `role="alert"`.
+- **Error:** Alert Tint background, Alert Text 13px text, 3px Court Orange left edge, 10px by 12px padding, `role="alert"`.
+- **Success:** Success Tint background, Success Text, Locker Green left edge. Used for confirmations at the top of a page ("Kai Chen has been reactivated.").
 
 ### Brand Lockup
 - **Style:** a 42px Court Orange square with a white condensed "H", next to the HUDDLE wordmark (25px, weight 700) and a 9px bold subtitle. On phones the square is 36px and the wordmark 22px.
 
+### Site Header
+- **Style:** 60px tall, Board White, 1px Rule Line below. Compact brand lockup on the left (36px mark, 22px wordmark); on the right the Admin link (admins only), the user's name (links to Change password) and Logout, all 13px weight 600.
+- **State:** the current section has a 3px Court Orange line on the header's bottom edge. Hover underlines the link in Court Orange. Long names are cut with an ellipsis.
+
+### Tag
+- **Style:** 11px bold, 3px by 7px padding, square. Locker Green with Board White text for a role ("Admin"); Track Grey with Ink Soft text for a state ("Deactivated", "Temporary password").
+
+### List Rows
+- **Style:** rows inside one Board White block with a 1px Rule Line border and 1px lines between rows; 14px by 18px padding. The main text is 14px weight 600, supporting text 13px or 12px Muted Grey. Columns line up across rows; on phones a row stacks.
+
 ### Kicker Label
-- **Style:** 10px bold capitals in Locker Green above a heading. An orange dot or span may sit beside it.
+- **Style:** 10px bold capitals in Locker Green above the login heading. Login page only: on every other page the heading stands alone.
 
 ## Do's and Don'ts
 
@@ -219,7 +268,8 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **Do** keep controls at least 42px tall so they are easy to tap on a phone.
 - **Do** keep the 2px Court Orange focus outline on anything that can be focused.
 - **Do** respect `prefers-reduced-motion`; transitions are 160ms and only change colour or nudge position.
-- **Do** check contrast on new pages. Small grey text (9px to 10px footer and kicker text, placeholder text) and orange text on Board White are below WCAG AA today; use Marker Ink, Ink Soft or Locker Green for text people need to read.
+- **Do** keep text at WCAG AA contrast (4.5:1). Marker Ink, Ink Soft, Locker Green and Muted Grey all pass on Board White and Paper. Court Orange does not pass as text: use Court Orange Deep or Alert Text.
+- **Do** give repeated buttons a full `aria-label` ("Deactivate Wei Jie"), so screen readers can tell the rows apart.
 
 ### Don't:
 - **Don't** use purple, gradients as decoration, or any accent colour other than Court Orange.
@@ -229,3 +279,5 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **Don't** set body text, labels or controls in Barlow Condensed.
 - **Don't** use pure black (`#000`) or pure white (`#fff`) for surfaces.
 - **Don't** fill large areas with Court Orange.
+- **Don't** add a kicker label above headings on new pages.
+- **Don't** set field text below 16px.

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "components/forms.html" import text_field %}
 
 {% block title %}Sign in | Huddle{% endblock %}
 
@@ -12,7 +13,7 @@
       <img
         class="identity-photo"
         src="{{ url_for('static', filename='images/sutd_team.jpg') }}"
-        alt="Basketball players competing on court"
+        alt="The SUTD basketball team on court"
         >
       <div class="photo-wash"></div>
 
@@ -31,33 +32,13 @@
 
     <section class="login-panel">
       <div class="login-content">
-        <p class="section-kicker"> TEAM ACCESS</p>
+        <p class="section-kicker">TEAM ACCESS</p>
         <h2 id="login-title">Welcome back.</h2>
 
-        <form class="login-form" action="{{ url_for('auth.login') }}" method="POST">
-          <fieldset class="role-fieldset">
-            <legend>Your role?</legend>
-            <div class="role-switch">
-              <input id="role-player" name="role" type="radio" value="player" checked>
-              <label for="role-player">Player</label>
-              <input id="role-coach" name="role" type="radio" value="coach">
-              <label for="role-coach">Coach / Editor</label>
-            </div>
-          </fieldset>
-
-          <div class="password-heading">
-            <label for="password">Team password</label>
-          </div>
-          <div class="password-control">
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              placeholder="Enter your password"
-              required>
-            <button class="password-toggle" type="button">Show</button>
-          </div>
+        <form class="login-form" action="{{ url_for('auth.login', next=request.args.get('next')) }}" method="POST">
+          {{ form.hidden_tag() }}
+          {{ text_field(form.username, autocomplete="username", autocapitalize="none", spellcheck="false", placeholder="Enter your username", required=True) }}
+          {{ text_field(form.password, toggle=True, autocomplete="current-password", placeholder="Enter your password", required=True) }}
 
           {% if error %}
           <p class="form-message" role="alert">{{ error }}</p>
@@ -65,7 +46,7 @@
 
           <button class="submit-button" type="submit">
             <span>Enter playbook</span>
-            <span class="submit-arrow">&#8594;</span>
+            <span class="submit-arrow" aria-hidden="true">&#8594;</span>
           </button>
         </form>
       </div>

@@ -1,0 +1,11 @@
+{# Layout for logged-in pages: header on top, page content below. #}
+{% extends "base.html" %}
+
+{% block body %}
+  <a class="skip-link" href="#main">Skip to content</a>
+  {% include "components/site_header.html" %}
+  <main class="page{% block page_class %}{% endblock %}" id="main">
+    {% include "components/flash_messages.html" %}
+    {% block content %}{% endblock %}
+  </main>
+{% endblock %}

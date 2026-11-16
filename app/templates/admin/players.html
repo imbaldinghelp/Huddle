@@ -1,0 +1,69 @@
+{% extends "shell.html" %}
+
+{% block title %}Players | Huddle{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <h1 class="page-title">Players.</h1>
+    <a class="button" href="{{ url_for('admin.new_player') }}">Add player</a>
+  </div>
+
+  <ul class="roster">
+    {% for user in users %}
+      <li class="roster-row{% if not user.is_active %} is-inactive{% endif %}">
+        <div class="roster-person">
+          <span class="roster-name">{{ user.display_name }}</span>
+          <span class="roster-username">{{ user.username }}</span>
+        </div>
+
+        <div class="roster-status">
+          {% if user.is_admin %}<span class="tag">Admin</span>{% endif %}
+          {% if not user.is_active %}
+            <span class="tag tag-muted">Deactivated</span>
+          {% elif user.must_change_password %}
+            <span class="tag tag-muted">Temporary password</span>
+          {% endif %}
+          <span class="roster-last-login">
+            {% if user.last_login_at %}
+              Last login {{ user.last_login_at.strftime("%d %b %Y") }}
+            {% else %}
+              Never logged in
+            {% endif %}
+          </span>
+        </div>
+
+        <div class="roster-actions">
+          {% if user.id == current_user.id %}
+            <span class="roster-you">This is you</span>
+          {% else %}
+            <form action="{{ url_for('admin.reset_player_password', user_id=user.id) }}" method="POST"
+                  data-confirm="Reset the password for {{ user.display_name }}? Their current password will stop working.">
+              {{ action_form.hidden_tag() }}
+              <button class="button button-quiet" type="submit" aria-label="Reset password for {{ user.display_name }}">Reset password</button>
+            </form>
+            {% if user.is_active %}
+              <form action="{{ url_for('admin.deactivate_player', user_id=user.id) }}" method="POST"
+                    data-confirm="Deactivate {{ user.display_name }}? They will not be able to log in.">
+                {{ action_form.hidden_tag() }}
+                <button class="button button-quiet" type="submit" aria-label="Deactivate {{ user.display_name }}">Deactivate</button>
+              </form>
+            {% else %}
+              <form action="{{ url_for('admin.reactivate_player', user_id=user.id) }}" method="POST">
+                {{ action_form.hidden_tag() }}
+                <button class="button button-quiet" type="submit" aria-label="Reactivate {{ user.display_name }}">Reactivate</button>
+              </form>
+            {% endif %}
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/confirm-submit.js') }}" defer></script>
+{% endblock %}
