@@ -24,6 +24,21 @@ input {
   font: inherit;
 }
 
+a {
+  color: var(--green);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--ink);
+}
+
+::selection {
+  background: var(--selection);
+  color: var(--ink);
+}
+
 :focus-visible {
   outline: 2px solid var(--orange);
   outline-offset: 3px;

@@ -1,0 +1,34 @@
+/* Error pages: 400, 403, 404, 500. */
+
+.error-page {
+  display: grid;
+  max-width: 960px;
+  min-height: 100vh;
+  grid-template-rows: auto 1fr;
+  margin: 0 auto;
+  padding: 14px 24px 24px;
+}
+
+.error-body {
+  max-width: 480px;
+  align-self: center;
+  padding-bottom: 96px;
+}
+
+.error-body .page-intro {
+  margin-bottom: 26px;
+}
+
+.error-code {
+  margin: 22px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 420px) {
+  .error-page {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+}

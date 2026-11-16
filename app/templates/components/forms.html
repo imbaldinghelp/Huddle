@@ -1,0 +1,36 @@
+{#
+  Form field macros. Import with:
+    {% from "components/forms.html" import text_field %}
+
+  text_field(field, hint=None, toggle=False, **attributes)
+    field       a WTForms field
+    hint        optional help text shown under the field
+    toggle      True adds a Show/Hide button (for password fields)
+    attributes  extra HTML attributes for the <input>, e.g. autocomplete="username"
+#}
+{% macro text_field(field, hint=None, toggle=False) %}
+  {% set described_by = [] %}
+  {# An error replaces the hint, so the two never say the same thing twice. #}
+  {% set show_hint = hint and not field.errors %}
+  {% if show_hint %}{% set _ = described_by.append(field.id ~ "-hint") %}{% endif %}
+  {% if field.errors %}{% set _ = described_by.append(field.id ~ "-error") %}{% endif %}
+  <div class="field">
+    <label class="field-label" for="{{ field.id }}">{{ field.label.text }}</label>
+    <div class="field-control{% if field.errors %} is-invalid{% endif %}">
+      {{ field(
+        aria_describedby=described_by | join(" ") if described_by else none,
+        aria_invalid="true" if field.errors else none,
+        **kwargs
+      ) }}
+      {% if toggle %}
+        <button class="field-action" type="button" data-password-toggle aria-pressed="false">Show</button>
+      {% endif %}
+    </div>
+    {% if show_hint %}
+      <p class="field-hint" id="{{ field.id }}-hint">{{ hint }}</p>
+    {% endif %}
+    {% if field.errors %}
+      <p class="field-error" id="{{ field.id }}-error">{{ field.errors | join(" ") }}</p>
+    {% endif %}
+  </div>
+{% endmacro %}
