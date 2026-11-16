@@ -1,0 +1,399 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T07:12:30+00:00",
+  "title": "Design System: Huddle",
+  "extensions": {
+    "colorMeta": {
+      "court-orange": {
+        "role": "primary",
+        "displayName": "Court Orange",
+        "canonical": "#e45b35",
+        "tonalRamp": [
+          "#371d15",
+          "#772610",
+          "#aa3717",
+          "#de471e",
+          "#e7704e",
+          "#ee9982",
+          "#e8cac2",
+          "#f7f0ee"
+        ]
+      },
+      "court-orange-deep": {
+        "role": "primary",
+        "displayName": "Court Orange Deep",
+        "canonical": "#c54625",
+        "tonalRamp": [
+          "#351d17",
+          "#712815",
+          "#a33a1f",
+          "#d44b28",
+          "#df7356",
+          "#e99b87",
+          "#e6cbc4",
+          "#f6f0ee"
+        ]
+      },
+      "locker-green": {
+        "role": "secondary",
+        "displayName": "Locker Green",
+        "canonical": "#435d4c",
+        "tonalRamp": [
+          "#232a25",
+          "#384e40",
+          "#51705c",
+          "#699277",
+          "#8bab96",
+          "#acc4b4",
+          "#d1d9d4",
+          "#f1f3f2"
+        ]
+      },
+      "marker-ink": {
+        "role": "neutral",
+        "displayName": "Marker Ink",
+        "canonical": "#18231f",
+        "tonalRamp": [
+          "#222a27",
+          "#375047",
+          "#4f7365",
+          "#669584",
+          "#88ada0",
+          "#abc5bc",
+          "#d0dad6",
+          "#f1f3f3"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Ink Soft",
+        "canonical": "#39463f",
+        "tonalRamp": [
+          "#242926",
+          "#3c4a43",
+          "#576a60",
+          "#718b7d",
+          "#91a59a",
+          "#b1bfb7",
+          "#d3d8d5",
+          "#f2f3f2"
+        ]
+      },
+      "muted-grey": {
+        "role": "neutral",
+        "displayName": "Muted Grey",
+        "canonical": "#70776f",
+        "tonalRamp": [
+          "#262725",
+          "#424641",
+          "#5e645d",
+          "#7a8279",
+          "#989e97",
+          "#b6bab5",
+          "#d4d6d4",
+          "#f2f2f2"
+        ]
+      },
+      "board-white": {
+        "role": "neutral",
+        "displayName": "Board White",
+        "canonical": "#fffefa",
+        "tonalRamp": [
+          "#3c3410",
+          "#876c00",
+          "#c19a00",
+          "#fbc900",
+          "#ffd737",
+          "#ffe371",
+          "#eee4bc",
+          "#f8f6ec"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#f2f1eb",
+        "tonalRamp": [
+          "#2b2a22",
+          "#524e35",
+          "#756f4c",
+          "#989163",
+          "#b0aa86",
+          "#c7c3a9",
+          "#dad9d0",
+          "#f3f3f1"
+        ]
+      },
+      "rule-line": {
+        "role": "neutral",
+        "displayName": "Rule Line",
+        "canonical": "#d9d9d0",
+        "tonalRamp": [
+          "#292924",
+          "#4b4b3c",
+          "#6b6b56",
+          "#8b8b70",
+          "#a5a590",
+          "#bfbfb0",
+          "#d8d8d2",
+          "#f3f3f2"
+        ]
+      },
+      "field-line": {
+        "role": "neutral",
+        "displayName": "Field Line",
+        "canonical": "#cfd2c9",
+        "tonalRamp": [
+          "#272824",
+          "#454a3d",
+          "#636958",
+          "#818972",
+          "#9ea492",
+          "#babeb2",
+          "#d6d7d3",
+          "#f2f3f2"
+        ]
+      },
+      "track-grey": {
+        "role": "neutral",
+        "displayName": "Track Grey",
+        "canonical": "#e9e9e1",
+        "tonalRamp": [
+          "#2a2a23",
+          "#4e4e39",
+          "#6f6f52",
+          "#91916a",
+          "#aaaa8b",
+          "#c3c3ad",
+          "#d9d9d1",
+          "#f3f3f1"
+        ]
+      },
+      "photo-green": {
+        "role": "neutral",
+        "displayName": "Photo Green",
+        "canonical": "#283b32",
+        "tonalRamp": [
+          "#222b26",
+          "#365044",
+          "#4e7362",
+          "#66967f",
+          "#88ae9c",
+          "#aac6b9",
+          "#d0dad5",
+          "#f1f3f2"
+        ]
+      },
+      "alert-tint": {
+        "role": "neutral",
+        "displayName": "Alert Tint",
+        "canonical": "#fff0e9",
+        "tonalRamp": [
+          "#3c1e10",
+          "#872b00",
+          "#c13d00",
+          "#fb5000",
+          "#ff7637",
+          "#ff9e71",
+          "#eeccbc",
+          "#f8f0ec"
+        ]
+      },
+      "alert-text": {
+        "role": "neutral",
+        "displayName": "Alert Text",
+        "canonical": "#87391f",
+        "tonalRamp": [
+          "#341f18",
+          "#6e2e19",
+          "#9d4224",
+          "#cc562f",
+          "#da7b5c",
+          "#e4a28b",
+          "#e5cdc5",
+          "#f6f0ef"
+        ]
+      },
+      "arrow-peach": {
+        "role": "neutral",
+        "displayName": "Arrow Peach",
+        "canonical": "#f39a73",
+        "tonalRamp": [
+          "#391f14",
+          "#7c2d0b",
+          "#b2410f",
+          "#e85414",
+          "#ef7a46",
+          "#f4a17c",
+          "#eacdc0",
+          "#f7f0ed"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The one big statement on a photo or hero area."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page headings."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Wordmark, card and section titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptions, notes, field text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels and button text."
+      },
+      "kicker": {
+        "displayName": "Kicker",
+        "purpose": "Small capital labels above headings."
+      }
+    },
+    "shadows": [
+      {
+        "name": "selected-lift",
+        "value": "0 1px 4px rgba(24, 35, 31, 0.12)",
+        "purpose": "Selected option; raised cards."
+      },
+      {
+        "name": "focus-glow",
+        "value": "0 0 0 3px rgba(67, 93, 76, 0.12)",
+        "purpose": "Ring around a focused field."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-change",
+        "value": "160ms ease",
+        "purpose": "Colour and small position changes on hover and focus."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tablet",
+        "value": "1000px"
+      },
+      {
+        "name": "phone",
+        "value": "720px"
+      },
+      {
+        "name": "small-phone",
+        "value": "380px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one main action on a form.",
+      "html": "<button class=\"ds-btn-primary\"><span>Enter playbook</span><span class=\"ds-btn-arrow\">&#8594;</span></button>",
+      "css": ".ds-btn-primary { display: flex; width: 100%; min-height: 52px; align-items: center; justify-content: space-between; padding: 0 17px; border: 0; background: var(--ink); color: white; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; transition: background-color 160ms ease; } .ds-btn-primary:hover { background: var(--green); } .ds-btn-primary:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; } .ds-btn-arrow { color: #f39a73; font-size: 20px; line-height: 1; transition: transform 160ms ease; } .ds-btn-primary:hover .ds-btn-arrow { transform: translateX(3px); }"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Text or password field with an optional action inside.",
+      "html": "<div class=\"ds-field\"><input type=\"password\" placeholder=\"Enter your password\"><button type=\"button\">Show</button></div>",
+      "css": ".ds-field { display: flex; min-height: 50px; align-items: center; border: 1px solid #cfd2c9; background: var(--white); transition: border-color 160ms ease, box-shadow 160ms ease; } .ds-field:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(67, 93, 76, 0.12); } .ds-field input { width: 100%; min-width: 0; height: 48px; padding: 0 14px; border: 0; outline: 0; background: transparent; color: var(--ink); font-family: 'DM Sans', sans-serif; font-size: 13px; } .ds-field button { min-width: 57px; align-self: stretch; padding: 0 12px; border: 0; background: transparent; color: var(--green); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 700; } .ds-field button:hover { color: var(--orange-dark); }"
+    },
+    {
+      "name": "Segmented Options",
+      "kind": "custom",
+      "refersTo": "segmented-option",
+      "description": "Choose one of two options.",
+      "html": "<div class=\"ds-segmented\"><span class=\"ds-segmented-on\">Player</span><span>Coach / Editor</span></div>",
+      "css": ".ds-segmented { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 4px; background: #e9e9e1; } .ds-segmented span { display: grid; min-height: 42px; place-items: center; padding: 8px 10px; color: #69716a; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; } .ds-segmented .ds-segmented-on { background: var(--white); color: var(--ink); box-shadow: 0 1px 4px rgba(24, 35, 31, 0.12); }"
+    },
+    {
+      "name": "Form Message",
+      "kind": "custom",
+      "refersTo": "form-message",
+      "description": "Error or notice shown under a form field.",
+      "html": "<p class=\"ds-form-message\" role=\"alert\">Wrong username or password.</p>",
+      "css": ".ds-form-message { margin: 0; padding: 10px 12px; border-left: 3px solid var(--orange); background: #fff0e9; color: #87391f; font-family: 'DM Sans', sans-serif; font-size: 12px; line-height: 1.5; }"
+    },
+    {
+      "name": "Brand Lockup",
+      "kind": "custom",
+      "refersTo": "brand-mark",
+      "description": "Orange H mark with the HUDDLE wordmark.",
+      "html": "<span class=\"ds-brand\"><span class=\"ds-brand-mark\">H</span><span class=\"ds-brand-name\">HUDDLE</span></span>",
+      "css": ".ds-brand { display: inline-flex; align-items: center; gap: 12px; color: var(--ink); } .ds-brand-mark { display: grid; width: 42px; aspect-ratio: 1; place-items: center; background: var(--orange); color: white; font-family: var(--display-font); font-size: 30px; font-weight: 700; line-height: 1; } .ds-brand-name { font-family: var(--display-font); font-size: 25px; font-weight: 700; line-height: 0.95; }"
+    },
+    {
+      "name": "Kicker Label",
+      "kind": "custom",
+      "refersTo": "kicker",
+      "description": "Small capital label above a heading.",
+      "html": "<p class=\"ds-kicker\">TEAM ACCESS</p>",
+      "css": ".ds-kicker { margin: 0; color: var(--green); font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 700; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Locker Room Whiteboard",
+    "overview": "Huddle looks like the board the team gathers around before a game: an off-white surface, dark marker ink, one orange marker for the thing that matters. It is made for the team only, so nothing on it is selling anything. Headings are tall and condensed like a scoreboard; everything else is small, plain and quiet.\n\nThe mood is focused and no-nonsense. A player opens Huddle to learn a play, usually on a phone, often minutes before training. Pages are calm, sharp and practical. Edges are square. Colour is used sparingly, and decoration is limited to one faint dot grid on the board surface and the team photo on the login page.",
+    "keyCharacteristics": [
+      "Off-white board surface with dark green-black ink, never pure white or pure black.",
+      "Tall condensed headings (Barlow Condensed) over small, plain body text (DM Sans).",
+      "Square corners everywhere (0 radius).",
+      "One orange accent, used in small amounts.",
+      "Mostly flat surfaces; light shadows are allowed where they help show what is raised or selected."
+    ],
+    "rules": [
+      {
+        "name": "The One Marker Rule",
+        "body": "Orange is the only loud colour. It marks one or two small things per screen (brand mark, focus, an alert edge). It is never a page background, a card fill or a gradient.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tokens Only Rule",
+        "body": "Colours and fonts are defined in `app/static/css/tokens.css` and used through `var(--name)`. Several neutrals above are still written as hex values in the login CSS; move them into `tokens.css` the first time a second page needs them.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Barlow Condensed is for headings and the wordmark only. Anything longer than a short line, and every control, is DM Sans.",
+        "section": "typography"
+      },
+      {
+        "name": "The Capitals Are Typed Rule",
+        "body": "Kickers and the wordmark are written in capitals in the HTML. There is no `text-transform` and no extra letter-spacing.",
+        "section": "typography"
+      },
+      {
+        "name": "The Light Touch Rule",
+        "body": "A shadow is never darker than 12% Marker Ink and never wider than a few pixels. If a surface needs a heavy shadow to stand out, change its background tone or add a line.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the colours and fonts from `tokens.css` through `var(--name)`.",
+      "Do keep every corner square (0 radius).",
+      "Do put one Barlow Condensed heading on a page and let DM Sans do the rest.",
+      "Do keep controls at least 42px tall so they are easy to tap on a phone.",
+      "Do keep the 2px Court Orange focus outline on anything that can be focused.",
+      "Do respect `prefers-reduced-motion`; transitions are 160ms and only change colour or nudge position.",
+      "Do check contrast on new pages. Small grey text (9px to 10px footer and kicker text, placeholder text) and orange text on Board White are below WCAG AA today; use Marker Ink, Ink Soft or Locker Green for text people need to read."
+    ],
+    "donts": [
+      "Don't use purple, gradients as decoration, or any accent colour other than Court Orange.",
+      "Don't use emoji as icons; icons are custom SVGs in `app/static/icons/`.",
+      "Don't round corners or turn buttons into pills.",
+      "Don't use heavy or coloured drop shadows.",
+      "Don't set body text, labels or controls in Barlow Condensed.",
+      "Don't use pure black (`#000`) or pure white (`#fff`) for surfaces.",
+      "Don't fill large areas with Court Orange."
+    ]
+  }
+}

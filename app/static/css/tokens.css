@@ -1,0 +1,16 @@
+/* Design tokens: every colour and font in the app is defined here and nowhere else. */
+
+:root {
+  color-scheme: light;
+  --ink: #18231f;
+  --ink-soft: #39463f;
+  --muted: #70776f;
+  --paper: #f2f1eb;
+  --white: #fffefa;
+  --line: #d9d9d0;
+  --orange: #e45b35;
+  --orange-dark: #c54625;
+  --green: #435d4c;
+  --display-font: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body-font: "DM Sans", sans-serif;
+}
