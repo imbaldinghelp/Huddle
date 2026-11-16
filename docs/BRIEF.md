@@ -60,7 +60,7 @@ Pin all versions in `requirements.txt`.
 Huddle/
 ├── app/
 │   ├── __init__.py        # create_app()
-│   ├── config.py          # DevConfig, TestConfig, ProdConfig
+│   ├── config.py          # DevConfig (dev + tests), ProdConfig
 │   ├── extensions.py      # db, migrate, login_manager, csrf, limiter
 │   ├── constants.py       # roles, play categories
 │   ├── cli.py             # flask create-admin

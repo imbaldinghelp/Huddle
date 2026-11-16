@@ -47,7 +47,7 @@ python -m pytest tests/test_app.py    # one file
 Huddle/
 ├── app/
 │   ├── __init__.py          # create_app(): builds the Flask app
-│   ├── config.py            # DevConfig, TestConfig, ProdConfig
+│   ├── config.py            # DevConfig (dev + tests), ProdConfig
 │   ├── constants.py         # roles, play categories
 │   ├── auth/                # login page routes
 │   │   ├── __init__.py

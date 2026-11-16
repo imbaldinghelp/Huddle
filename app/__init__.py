@@ -15,7 +15,7 @@ from app.config import CONFIGS, load_secret_key
 def create_app(config_name=None):
     """Build and return a configured Flask app.
 
-    config_name is "development", "testing" or "production". When it is not
+    config_name is "development" or "production". When it is not
     given, the FLASK_CONFIG environment variable decides (default: development).
     """
     config_name = config_name or os.environ.get("FLASK_CONFIG", "development")
