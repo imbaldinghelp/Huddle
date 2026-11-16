@@ -1,4 +1,4 @@
-"""Settings for each environment: development, testing and production."""
+"""Settings for the two environments: development (also used by tests) and production."""
 
 import os
 
@@ -23,13 +23,10 @@ class BaseConfig:
 
 
 class DevConfig(BaseConfig):
+    """Local development and automated tests."""
+
     DEBUG = True
     FALLBACK_SECRET_KEY = "dev-only-not-a-secret"
-
-
-class TestConfig(BaseConfig):
-    TESTING = True
-    FALLBACK_SECRET_KEY = "test-only-not-a-secret"
 
 
 class ProdConfig(BaseConfig):
@@ -39,7 +36,6 @@ class ProdConfig(BaseConfig):
 
 CONFIGS = {
     "development": DevConfig,
-    "testing": TestConfig,
     "production": ProdConfig,
 }
 
@@ -47,7 +43,7 @@ CONFIGS = {
 def load_secret_key(config_class):
     """Return the key Flask uses to sign session cookies.
 
-    Development and testing fall back to a throwaway key so the app runs
+    Development (and tests) fall back to a throwaway key so the app runs
     without any setup. Production has no fallback: a guessable key would let
     anyone forge a login session, so we stop instead of starting unsafely.
     """

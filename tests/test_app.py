@@ -3,8 +3,9 @@ import pytest
 from app import create_app
 
 
-def test_app_uses_testing_config(app):
+def test_app_uses_development_config(app):
     assert app.config["TESTING"] is True
+    assert app.config["SESSION_COOKIE_SECURE"] is False
 
 
 @pytest.mark.parametrize("path", ["/", "/login"])

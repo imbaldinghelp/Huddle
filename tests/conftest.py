@@ -7,8 +7,10 @@ from app import create_app
 
 @pytest.fixture
 def app():
-    """A fresh Huddle app using the testing settings."""
-    return create_app("testing")
+    """A fresh Huddle app using the development settings, with Flask's test mode on."""
+    app = create_app("development")
+    app.config.update(TESTING=True)
+    return app
 
 
 @pytest.fixture
