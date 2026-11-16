@@ -22,6 +22,12 @@ class PlayCategory(StrEnum):
 CATEGORY_LABELS = {
     PlayCategory.OFFENSE: "Offense",
     PlayCategory.DEFENSE: "Defense",
-    PlayCategory.SIDELINE: "Sideline (SLOB)",
-    PlayCategory.BASELINE: "Baseline (BLOB)",
+    PlayCategory.SIDELINE: "Sideline",
+    PlayCategory.BASELINE: "Baseline",
 }
+
+
+class PlayStatus(StrEnum):
+    # A draft is only visible to admins. Players see published plays only.
+    DRAFT = "draft"
+    PUBLISHED = "published"

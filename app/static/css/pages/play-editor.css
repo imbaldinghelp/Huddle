@@ -1,0 +1,270 @@
+/* Court editor (admins): play details, the court with its tools, the steps.
+   The court itself is styled in ../components.css ("Court diagram"). */
+
+.editor-section + .editor-section {
+  margin-top: 44px;
+}
+
+.section-title {
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ---------- Details: title, category, summary, notes ---------- */
+
+.details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 24px 20px;
+}
+
+/* The grid's gap spaces the fields here, not the usual margin. */
+.details-grid .field {
+  margin-top: 0;
+}
+
+.details-wide {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Court and steps, side by side ---------- */
+
+.editor-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 540px) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+
+/* Tools sit on a grey track; the chosen one is lifted, like a segmented option. */
+.editor-toolbar {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 3px;
+  padding: 4px;
+  background: var(--track);
+}
+
+.tool-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.tool-button:hover {
+  color: var(--ink);
+}
+
+.tool-button[aria-pressed="true"] {
+  background: var(--white);
+  box-shadow: var(--shadow-lift);
+  color: var(--ink);
+}
+
+.tool-button:focus-visible {
+  outline-offset: 2px;
+}
+
+/* What the chosen tool does, with Undo at the far end. */
+.editor-hint-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 6px;
+}
+
+.editor-hint {
+  /* Room for two lines, so the court does not move when the hint changes. */
+  min-height: 3.2em;
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* The mouse cursor shows what the chosen tool will do. */
+.court[data-tool] {
+  touch-action: none;
+}
+
+.court[data-tool="move"] .court-player,
+.court[data-tool="move"] .court-ball {
+  cursor: grab;
+}
+
+.court[data-tool="cut"] .court-player,
+.court[data-tool="dribble"] .court-player,
+.court[data-tool="pass"] .court-player,
+.court[data-tool="screen"] .court-player {
+  cursor: crosshair;
+}
+
+.court[data-tool="erase"] .court-action {
+  cursor: pointer;
+}
+
+.court[data-tool="erase"] .court-action:hover .court-action-line {
+  stroke: var(--orange-dark);
+}
+
+.court[data-tool="erase"] .court-action:hover .court-action-head {
+  fill: var(--orange-dark);
+}
+
+.check-option {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 9px;
+  margin-top: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.check-option input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+/* ---------- Steps ---------- */
+
+.steps-title {
+  margin: 0 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step-list {
+  display: grid;
+  gap: 3px;
+  margin: 0 0 10px;
+  padding: 4px;
+  background: var(--track);
+  list-style: none;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+}
+
+.step-item[aria-current="step"] {
+  background: var(--white);
+  box-shadow: var(--shadow-lift);
+}
+
+.step-select {
+  display: grid;
+  min-width: 0;
+  min-height: 48px;
+  flex: 1;
+  align-content: center;
+  gap: 1px;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.step-select:focus-visible {
+  outline-offset: -2px;
+}
+
+.step-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.step-preview {
+  overflow: hidden;
+  /* Muted Grey is too faint on the grey track, so this uses Ink Soft. */
+  color: var(--ink-soft);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.step-actions {
+  display: flex;
+  flex: none;
+}
+
+.editor-steps .field {
+  margin-top: 24px;
+}
+
+/* ---------- Save bar: stays in view at the bottom of the window ---------- */
+
+.editor-save {
+  position: sticky;
+  z-index: 2;
+  bottom: 0;
+  margin-top: 40px;
+  padding: 14px 0 16px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.editor-save .form-message {
+  margin: 0 0 10px;
+}
+
+.editor-save-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.editor-save-note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+@media (max-width: 860px) {
+  .editor-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .details-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* On a phone the save buttons sit at the end of the page instead of
+     covering part of a small screen. */
+  .editor-save {
+    position: static;
+  }
+
+  /* On a narrow screen each tool's name sits under its icon. */
+  .tool-button {
+    min-height: 52px;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 11px;
+  }
+}

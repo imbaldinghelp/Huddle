@@ -163,6 +163,32 @@
   opacity: 1;
 }
 
+/* Longer text and drop-down choices use the same box as a one-line field. */
+.field-control textarea,
+.field-control select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 16px;
+}
+
+.field-control textarea {
+  min-height: 104px;
+  padding: 12px 14px;
+  caret-color: var(--orange-dark);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.field-control select {
+  height: 48px;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
 /* Button inside a field, for example Show/Hide on a password. */
 .field-action {
   min-width: 57px;
@@ -178,6 +204,28 @@
 
 .field-action:hover {
   color: var(--orange-dark);
+}
+
+/* Small text-only button for minor actions, for example Up/Down in a list. */
+.text-button {
+  min-height: 32px;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.text-button:hover {
+  color: var(--orange-dark);
+}
+
+.text-button:disabled {
+  color: var(--muted);
+  cursor: default;
+  opacity: 0.55;
 }
 
 .field-hint,
@@ -275,6 +323,15 @@
   border-color: var(--ink);
   background: var(--white);
   color: var(--ink);
+}
+
+/* A button that cannot be used right now, such as Next on the last step. */
+.button:disabled,
+.button[aria-disabled="true"] {
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--muted);
+  cursor: default;
 }
 
 /* ---------- Segmented options: choose one of two ---------- */
@@ -439,6 +496,10 @@
   max-width: 438px;
 }
 
+.page-medium {
+  max-width: 768px;
+}
+
 .page-heading {
   display: flex;
   flex-wrap: wrap;
@@ -486,6 +547,253 @@
   font-weight: 600;
 }
 
+/* ---------- Section tabs: move between the parts of the admin area ---------- */
+
+.section-tabs {
+  display: flex;
+  gap: 22px;
+  margin: -14px 0 30px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-tab {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.section-tab:hover {
+  color: var(--ink);
+}
+
+.section-tab[aria-current="page"] {
+  box-shadow: inset 0 -2px 0 var(--ink);
+  color: var(--ink);
+}
+
+/* ---------- List rows: players, plays ---------- */
+
+/* The list is one grid and each row borrows its columns (subgrid),
+   so names, status and buttons line up from row to row. */
+.row-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) auto;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--white);
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 8px 20px;
+  padding: 14px 18px;
+}
+
+.row + .row {
+  border-top: 1px solid var(--line);
+}
+
+.row-main {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.row-title,
+.row-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-title {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.row-sub {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.row.is-inactive .row-title {
+  color: var(--muted);
+}
+
+.row-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+}
+
+.row-meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.row-actions form {
+  margin: 0;
+}
+
+.row-actions .button {
+  padding: 0 14px;
+}
+
+/* Shown in place of a list that has nothing in it yet. */
+.empty-note {
+  max-width: 60ch;
+  margin: 0;
+  padding: 22px 18px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ---------- Icons ---------- */
+
+/* Each icon is an SVG file in static/icons/, used as a stencil (mask) over a
+   block of the current text colour. That keeps icon colours in tokens.css. */
+.icon {
+  display: inline-block;
+  width: 20px;
+  aspect-ratio: 1;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: var(--icon) center / contain no-repeat;
+  mask: var(--icon) center / contain no-repeat;
+}
+
+.icon-offense { --icon: url("../icons/category-offense.svg"); }
+.icon-defense { --icon: url("../icons/category-defense.svg"); }
+.icon-sideline { --icon: url("../icons/category-sideline.svg"); }
+.icon-baseline { --icon: url("../icons/category-baseline.svg"); }
+.icon-move { --icon: url("../icons/tool-move.svg"); }
+.icon-erase { --icon: url("../icons/tool-erase.svg"); }
+.icon-cut { --icon: url("../icons/line-cut.svg"); }
+.icon-pass { --icon: url("../icons/line-pass.svg"); }
+.icon-dribble { --icon: url("../icons/line-dribble.svg"); }
+.icon-screen { --icon: url("../icons/line-screen.svg"); }
+
+/* ---------- Court diagram (play page and court editor) ---------- */
+
+/* The SVG is built by static/js/court/. Sizes inside it are in drawing
+   units (1 unit = 10 cm on a real court), so they scale with the court. */
+.court {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  background: var(--white);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.court-lines * {
+  fill: none;
+  stroke: var(--field-line);
+  stroke-width: 0.7;
+}
+
+.court-lines .court-key {
+  fill: var(--paper);
+}
+
+.court-lines .court-boundary,
+.court-lines .court-backboard {
+  stroke: var(--ink-soft);
+  stroke-width: 1;
+}
+
+.court-player circle {
+  fill: var(--white);
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.court-player text {
+  fill: var(--ink);
+  font-size: 7.5px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+/* A defender is an X with a small number. Its circle is invisible and only
+   gives the mouse something to grab. */
+.court-player-defense circle {
+  fill: transparent;
+  stroke: none;
+}
+
+.court-player-defense text {
+  fill: var(--green);
+  font-size: 8.5px;
+}
+
+.court-player .court-player-sub {
+  font-size: 5.5px;
+}
+
+.court-ball {
+  fill: var(--orange);
+  stroke: var(--ink);
+  stroke-width: 0.7;
+}
+
+.court-action-line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+
+.court-action-head {
+  fill: var(--ink);
+}
+
+.court-action-pass .court-action-line {
+  stroke-dasharray: 3 2.4;
+}
+
+.court-action .court-action-bar {
+  stroke-width: 1.6;
+}
+
+.court-action-defense .court-action-line {
+  stroke: var(--green);
+}
+
+.court-action-defense .court-action-head {
+  fill: var(--green);
+}
+
+/* A wide invisible line on top of each arrow, so it is easy to click. */
+.court-action-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 7;
+}
+
 @media (max-width: 720px) {
   .page {
     padding-top: 32px;
@@ -493,6 +801,19 @@
 
   .page-title {
     font-size: 40px;
+  }
+
+  .row-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .row {
+    padding: 16px;
+  }
+
+  .row-actions {
+    justify-content: flex-start;
+    margin-top: 6px;
   }
 }
 

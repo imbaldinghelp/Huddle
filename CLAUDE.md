@@ -9,7 +9,7 @@ Huddle is a private basketball playbook for SUTD Basketball (about 20 to 30 user
 - Flask with server-rendered Jinja templates. No React, no separate frontend app.
 - Dev machine is Windows + PowerShell + `.venv`; Brian also uses a Mac. README gives both: PowerShell and Mac Terminal (zsh) steps. Commands below are PowerShell; on Mac use `source .venv/bin/activate`, `python3`, `cp`, and `flask run --port 5001` (port 5000 is taken by AirPlay).
 - Two roles only: `admin` and `player`.
-- Four play categories: Offense, Defense, Sideline (SLOB), Baseline (BLOB), defined once in `app/constants.py`.
+- Four play categories: Offense, Defense, Sideline, Baseline (shown to users without "SLOB"/"BLOB"), defined once in `app/constants.py`.
 - Plays are entered with the interactive court editor (vanilla JS + SVG).
 - Hosting must be free: Render web service + Neon PostgreSQL. Nothing user-created is stored on disk.
 - The env template is `.env.example`. Packages are added to `requirements.txt` in the phase that first uses them, pinned to exact versions.
@@ -58,6 +58,8 @@ Follow the tree in `docs/BRIEF.md` section 5. A folder is created in the phase t
 - Every admin route uses `@admin_required` (`app/admin/decorators.py`). Every form, including one-button action forms, carries a CSRF token.
 - Never store, log or flash a raw password. Temporary passwords are rendered once, straight into the response.
 - After changing a model, create a migration and commit it with the change.
+- The court diagram JSON is documented in `app/static/js/court/README.md` and checked on the server in `app/playbook/validation.py`. Change the format in all three places together: README, validation (with its tests) and the JS.
+- All court drawing goes through `app/static/js/court/`; the viewer and editor never draw on their own.
 - CSS: one file per page in `static/css/pages/`; shared styles in `components.css`; colours and fonts only through tokens in `tokens.css`.
 - No inline styles and no inline scripts, except tiny bootstraps.
 - Link static files with `url_for('static', ...)` and routes with `url_for('<blueprint>.<view>')`.
@@ -73,3 +75,12 @@ Follow the tree in `docs/BRIEF.md` section 5. A folder is created in the phase t
 - At the end of a phase: check the project tree against section 5, summarise what was built and why in short bullets, list what to test manually, then wait for "continue".
 - Git belongs to Brian. Do not stage, commit, branch or push; leave changes in the working tree for him. (This replaces the brief's "commit at the end of each phase".) Read-only git commands are fine.
 - If the brief is unclear or seems wrong, ask before building.
+
+## Future improvements (Brian's wishlist, not yet scheduled)
+
+Do these only when asked, or fold them into a phase when Brian says so. Mention them when a related page is touched.
+
+- General UI enhancements and polish across the pages.
+- Navigation between pages: make the "Back to ..." links more visible and obvious (today they are small text links), and add breadcrumbs.
+- Replace the Sideline and Baseline category icons with better ones (`app/static/icons/category-sideline.svg`, `category-baseline.svg`).
+- Keyboard-only drawing in the court editor (the court is mouse/touch only today).

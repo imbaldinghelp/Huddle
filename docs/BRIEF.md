@@ -29,7 +29,7 @@ A private basketball playbook for my club.
 - **Framework:** stay on Flask with server-rendered Jinja templates. No React, no separate frontend app.
 - **Dev machine:** Windows, PowerShell, `.venv`. All README commands must be PowerShell.
 - **Roles:** only two: `admin` and `player`.
-- **Categories:** exactly 4: Offense, Defense, Sideline (SLOB), Baseline (BLOB). Store as an enum/constant in one place so more can be added later.
+- **Categories:** exactly 4: Offense, Defense, Sideline, Baseline (labels shown to users have no "SLOB"/"BLOB"). Store as an enum/constant in one place so more can be added later.
 - **Play input:** interactive court editor (section 7).
 - **Hosting:** must be free (section 9).
 

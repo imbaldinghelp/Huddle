@@ -1,0 +1,7 @@
+{# Links between the two parts of the admin area. Shown at the top of each list. #}
+<nav class="section-tabs" aria-label="Admin sections">
+  <a class="section-tab" href="{{ url_for('admin.players') }}"
+     {% if request.endpoint == 'admin.players' %}aria-current="page"{% endif %}>Players</a>
+  <a class="section-tab" href="{{ url_for('admin.plays') }}"
+     {% if request.endpoint == 'admin.plays' %}aria-current="page"{% endif %}>Plays</a>
+</nav>

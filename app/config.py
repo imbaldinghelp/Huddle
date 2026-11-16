@@ -38,6 +38,14 @@ class BaseConfig:
     # How long someone stays logged in on the same device.
     PERMANENT_SESSION_LIFETIME = timedelta(days=14)
 
+    # A form's security (CSRF) token stays valid for as long as the login
+    # session, not just one hour. Building a play in the court editor can take
+    # longer than that, and the save must still go through.
+    WTF_CSRF_TIME_LIMIT = None
+
+    # Refuse request bodies over 256 KB. A saved play is a few KB at most.
+    MAX_CONTENT_LENGTH = 256 * 1024
+
     # Login attempt counts are kept in memory. Fine for one small server.
     RATELIMIT_STORAGE_URI = "memory://"
     LOGIN_RATE_LIMIT = "5 per minute"

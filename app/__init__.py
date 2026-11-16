@@ -5,12 +5,17 @@ we build a fresh app on demand. Tests use this to get a clean app with test
 settings, and run.py uses it to get the real one.
 """
 
+import mimetypes
 import os
 
 from flask import Flask
 
 from app.config import CONFIGS, load_secret_key
 from app.extensions import csrf, db, limiter, login_manager, migrate
+
+# Some Windows machines label .js files as plain text, and browsers then
+# refuse to run the court editor's JavaScript modules. Always use the right type.
+mimetypes.add_type("text/javascript", ".js")
 
 
 def create_app(config_name=None, overrides=None):

@@ -1,0 +1,121 @@
+/* Play page: the court viewer, step text and coaching notes.
+   The court itself is styled in ../components.css ("Court diagram"). */
+
+.play-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+
+/* One column on phones; court beside the text on wide screens. */
+.play-layout {
+  display: grid;
+  gap: 26px;
+}
+
+.play-stage {
+  min-width: 0;
+}
+
+/* ---------- Step marks and buttons under the court ---------- */
+
+/* One mark for each step; the current one is orange. */
+.step-track {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+}
+
+.step-track span {
+  height: 4px;
+  flex: 1;
+  background: var(--line);
+}
+
+.step-track .is-current {
+  background: var(--orange);
+}
+
+.viewer-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.viewer-controls .button {
+  min-height: 48px;
+  padding: 0 8px;
+}
+
+/* ---------- Step text ---------- */
+
+.step-count,
+.notes-title {
+  margin: 0 0 8px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step-description {
+  /* Room for three lines, so the page does not jump between short steps. */
+  min-height: 4.8em;
+  max-width: 60ch;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.step-description.is-empty {
+  color: var(--muted);
+}
+
+/* ---------- Legend: what each line means ---------- */
+
+.court-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 22px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 600;
+  list-style: none;
+}
+
+.court-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Coaching notes ---------- */
+
+.coaching-notes {
+  margin-top: 30px;
+}
+
+.coaching-notes p {
+  max-width: 60ch;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+@media (min-width: 860px) {
+  .play-layout {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 40px;
+  }
+}

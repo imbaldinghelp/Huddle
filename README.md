@@ -2,7 +2,7 @@
 
 Huddle is a private basketball playbook for SUTD Basketball, built with Flask.
 
-**Status:** Phase 1 (accounts and roles) is done. Admins can log in, add players, reset passwords and deactivate accounts. Players can log in and must set their own password the first time. Plays and the court editor arrive in Phase 2. The full plan is in [docs/BRIEF.md](docs/BRIEF.md).
+**Status:** Phase 2 (playbook) is done. Admins manage player accounts and build plays in the court editor, as drafts or published. Players log in, browse the four categories and step through each published play. The AI assistant arrives in Phase 3. The full plan is in [docs/BRIEF.md](docs/BRIEF.md).
 
 ## Set up from scratch
 
@@ -95,7 +95,7 @@ Open <http://127.0.0.1:5000> in your browser and log in with the admin account. 
 python -m pytest
 ```
 
-You should see `65 passed`.
+You should see `156 passed`.
 
 ### Mac (Terminal)
 
@@ -182,14 +182,15 @@ Mac note: port 5000 is taken by AirPlay Receiver on recent macOS, which is why t
 python -m pytest
 ```
 
-You should see `65 passed`.
+You should see `156 passed`.
 
 ### If something goes wrong
 
 | What you see | What to do |
 |---|---|
 | `flask` or `pytest` "not recognized" / "command not found" | The virtual environment is not active. Run the activate step again (step 4); the prompt must start with `(.venv)`. |
-| `No such table: users` when you log in or create an admin | The database is missing. Run `flask db upgrade`. |
+| `No such table: users` (or `plays`) | The database is missing or out of date. Run `flask db upgrade`. |
+| The court does not appear on a play page or in the editor | Do a hard refresh (Ctrl+F5, or Cmd+Shift+R on Mac) so the browser loads the newest JavaScript. |
 | `Address already in use` | Another program uses that port. Add a different one, for example `flask run --port 5002`. |
 | `ModuleNotFoundError` | Packages are missing. Run `python -m pip install -r requirements.txt` with the environment active. |
 | Forgot your admin password | Run `flask create-admin` again with a new username, then reset the old admin's password from the Admin page. |
@@ -226,6 +227,20 @@ These commands are the same on Windows and Mac.
 - **Change your own password:** click your name in the header.
 - Logging in is limited to 5 attempts per minute from one address.
 
+## Plays
+
+Players open the **Playbook**, pick one of the four categories (Offense, Defense, Sideline, Baseline), then a play. On the play page they step through the diagram with **Previous** and **Next** (or the left and right arrow keys), or press **Play** to watch the players move.
+
+Admins manage plays under **Admin > Plays**:
+
+- **Create a play:** choose **New play**. Fill in the title and category, then build the diagram in the court editor.
+- **Court editor tools:** **Move** drags players (and the ball, onto another player). **Cut**, **Dribble** and **Screen** are drawn by dragging from a player. **Pass** is dragged from the player with the ball to a teammate. **Erase** removes an arrow you click. **Undo** (or Ctrl+Z) steps back.
+- **Steps:** **Add step** starts a new step with everyone where the last one left them. Steps can be moved up, moved down and removed, and each has its own description.
+- **Draft or published:** **Save as draft** keeps a play hidden from players. **Save and publish** makes it visible. You can also publish, unpublish and delete from the plays list.
+- **Reading a diagram:** solid arrow = cut, dashed arrow = pass, zigzag arrow = dribble, line ending in a bar = screen, orange dot = the ball, X1 to X5 = defenders.
+
+The diagram format is documented in [app/static/js/court/README.md](app/static/js/court/README.md).
+
 ## Test
 
 With the environment active (same commands on Windows and Mac):
@@ -260,46 +275,63 @@ Huddle/
 │   ├── cli.py               # flask create-admin
 │   ├── errors.py            # 400, 403, 404, 429, 500 handlers
 │   ├── models/
-│   │   └── user.py          # users table
+│   │   ├── user.py          # users table
+│   │   └── play.py          # plays and play_steps tables
 │   ├── auth/                # login, logout, change password
 │   │   ├── routes.py
 │   │   ├── forms.py
 │   │   ├── service.py       # account rules (check login, create user, passwords)
 │   │   └── hooks.py         # runs on every request: load user, force password change
-│   ├── admin/               # admin-only pages
+│   ├── admin/               # admin-only pages: players, plays, court editor
 │   │   ├── routes.py
 │   │   ├── forms.py
 │   │   ├── service.py       # create player, reset password, deactivate
 │   │   └── decorators.py    # @admin_required
-│   ├── playbook/            # player pages (placeholder until Phase 2)
-│   │   └── routes.py
+│   ├── playbook/            # player pages: categories, play lists, play viewer
+│   │   ├── routes.py
+│   │   ├── service.py       # play rules (find, save, publish, delete)
+│   │   └── validation.py    # checks a play sent by the court editor
 │   ├── templates/
 │   │   ├── base.html        # bare page skeleton
 │   │   ├── shell.html       # logged-in layout: header + content
-│   │   ├── components/      # site_header, flash_messages, forms (field macro)
+│   │   ├── components/      # site_header, flash_messages, forms, admin_tabs, text
 │   │   ├── auth/            # login, change_password
-│   │   ├── admin/           # players, new_player, player_credentials
-│   │   ├── playbook/        # index
+│   │   ├── admin/           # players, new_player, player_credentials, plays, play_editor
+│   │   ├── playbook/        # index, category, play
 │   │   └── errors/          # layout, 400, 403, 404, 500
 │   └── static/
 │       ├── css/
 │       │   ├── tokens.css       # colours and fonts
 │       │   ├── base.css         # resets and defaults
-│       │   ├── components.css   # shared pieces (fields, buttons, header...)
-│       │   └── pages/           # login.css, admin.css, error.css
+│       │   ├── components.css   # shared pieces (fields, buttons, header, court...)
+│       │   └── pages/           # login, admin, error, playbook, play, play-editor
 │       ├── js/
+│       │   ├── court/           # shared court drawing (see its README.md)
+│       │   │   ├── court.js     # court lines
+│       │   │   ├── render.js    # players, ball and arrows
+│       │   │   ├── model.js     # questions and changes about a diagram
+│       │   │   ├── animate.js   # positions part-way through a step
+│       │   │   ├── geometry.js  # line maths
+│       │   │   ├── svg.js       # SVG helpers
+│       │   │   └── README.md    # the diagram format
+│       │   ├── play-viewer.js   # play page: steps, arrow keys, Play button
+│       │   ├── play-editor.js   # court editor: tools, steps, undo, save
 │       │   ├── password-toggle.js
 │       │   └── confirm-submit.js
+│       ├── icons/               # custom SVG icons (categories, drawing tools)
 │       └── images/
 │           └── sutd_team.jpg
 ├── migrations/              # database migrations (Flask-Migrate)
 ├── instance/                # local SQLite database (gitignored)
 ├── tests/
-│   ├── conftest.py          # shared test fixtures
+│   ├── conftest.py          # shared test fixtures and sample play data
 │   ├── test_app.py          # app starts, static files, error page
 │   ├── test_auth.py         # login, logout, deactivated users
 │   ├── test_password_change.py
 │   ├── test_admin.py        # admin pages and permissions
+│   ├── test_admin_plays.py  # creating, editing, publishing, deleting plays
+│   ├── test_playbook.py     # what players see; drafts stay hidden
+│   ├── test_play_validation.py  # checks on court editor data
 │   ├── test_security.py     # CSRF and rate limiting
 │   └── test_cli.py          # flask create-admin
 ├── .claude/                 # Claude Code settings and the impeccable skill
@@ -315,4 +347,4 @@ Huddle/
 └── README.md
 ```
 
-Each blueprint folder also has an `__init__.py` that creates the blueprint. More folders (`assistant/`, `static/icons/`) are added in the phase that first needs them.
+Each blueprint folder also has an `__init__.py` that creates the blueprint. The `assistant/` folder is added in Phase 3, the phase that first needs it.

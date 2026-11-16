@@ -35,11 +35,25 @@ def test_home_sends_visitors_to_login(client):
         "/static/css/pages/error.css",
         "/static/js/password-toggle.js",
         "/static/js/confirm-submit.js",
+        "/static/css/pages/playbook.css",
+        "/static/css/pages/play.css",
+        "/static/css/pages/play-editor.css",
+        "/static/js/play-viewer.js",
+        "/static/js/play-editor.js",
+        "/static/js/court/court.js",
+        "/static/js/court/render.js",
+        "/static/icons/category-offense.svg",
+        "/static/icons/line-cut.svg",
         "/static/images/sutd_team.jpg",
     ],
 )
 def test_static_files_exist(client, path):
     assert client.get(path).status_code == 200
+
+
+def test_javascript_is_served_with_a_type_browsers_accept(client):
+    # Browsers refuse to run JavaScript modules that arrive labelled as plain text.
+    assert client.get("/static/js/court/court.js").mimetype == "text/javascript"
 
 
 def test_unknown_page_shows_404_page(client):

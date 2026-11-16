@@ -1,0 +1,141 @@
+/* Playbook pages: the four category cards and the list of plays in a category. */
+
+/* ---------- Category cards (main page) ---------- */
+
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.category-card {
+  display: flex;
+  aspect-ratio: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 10px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  text-align: center;
+  text-decoration: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.category-card:hover {
+  border-color: var(--ink);
+  box-shadow: var(--shadow-lift);
+  color: var(--ink);
+}
+
+.category-icon {
+  width: 30%;
+  max-width: 96px;
+  margin-bottom: 18px;
+}
+
+.category-name {
+  color: var(--green);
+  font-family: var(--display-font);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.category-count {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 560px) {
+  .category-grid {
+    gap: 12px;
+  }
+
+  .category-icon {
+    width: 34%;
+    margin-bottom: 12px;
+  }
+
+  .category-name {
+    font-size: 22px;
+  }
+
+  .category-count {
+    margin-top: 6px;
+    font-size: 12px;
+  }
+}
+
+/* On the narrowest phones the longer names need a smaller size to fit. */
+@media (max-width: 350px) {
+  .category-name {
+    font-size: 19px;
+  }
+}
+
+/* ---------- Plays in a category ---------- */
+
+.play-list {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--white);
+  list-style: none;
+}
+
+.play-list li + li {
+  border-top: 1px solid var(--line);
+}
+
+/* The whole row is the link, so it is easy to tap. */
+.play-link {
+  display: flex;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  padding: 14px 18px;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.play-link:hover {
+  background: var(--paper);
+}
+
+.play-link:focus-visible {
+  outline-offset: -2px;
+}
+
+/* A long summary wraps instead of being cut off: it is what tells plays apart. */
+.play-link .row-sub {
+  white-space: normal;
+}
+
+.play-link-meta {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .play-link {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px 16px;
+  }
+}
+
+/* Space between the page title and the list (or the note that replaces it). */
+.page-title + .play-list,
+.page-title + .empty-note {
+  margin-top: 26px;
+}
