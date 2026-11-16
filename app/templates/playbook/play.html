@@ -1,0 +1,64 @@
+{% extends "shell.html" %}
+
+{% block title %}{{ play.title }} | Huddle{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/play.css') }}">
+{% endblock %}
+
+{% block content %}
+  <a class="back-link" href="{{ url_for('playbook.category', slug=play.category) }}">Back to {{ play.category_label }}</a>
+  <div class="page-heading">
+    <h1 class="page-title">{{ play.title }}</h1>
+    {% if current_user.is_admin %}
+      <a class="button button-quiet" href="{{ url_for('admin.edit_play', play_id=play.id) }}">Edit play</a>
+    {% endif %}
+  </div>
+  {% if not play.is_published %}
+    <p class="play-status"><span class="tag tag-muted">Draft</span> Only admins can see this play until it is published.</p>
+  {% endif %}
+  {% if play.summary %}
+    <p class="page-intro">{{ play.summary }}</p>
+  {% endif %}
+
+  <div class="play-layout" data-play-viewer>
+    <div class="play-stage">
+      {# play-viewer.js draws the court in here. #}
+      <div data-court></div>
+      <div class="step-track" aria-hidden="true" data-step-track></div>
+      <div class="viewer-controls" data-step-controls>
+        <button class="button button-quiet" type="button" data-previous>Previous</button>
+        <button class="button" type="button" data-play>Play</button>
+        <button class="button button-quiet" type="button" data-next>Next</button>
+      </div>
+    </div>
+
+    <div>
+      <section aria-live="polite">
+        <h2 class="step-count" data-step-count>Step 1 of {{ steps | length }}</h2>
+        <p class="step-description" data-step-description></p>
+      </section>
+
+      <ul class="court-legend" aria-label="How to read the diagram">
+        <li><span class="icon icon-cut" aria-hidden="true"></span>Cut</li>
+        <li><span class="icon icon-pass" aria-hidden="true"></span>Pass</li>
+        <li><span class="icon icon-dribble" aria-hidden="true"></span>Dribble</li>
+        <li><span class="icon icon-screen" aria-hidden="true"></span>Screen</li>
+      </ul>
+
+      {% if play.coaching_notes %}
+        <section class="coaching-notes">
+          <h2 class="notes-title">Coaching notes</h2>
+          <p>{{ play.coaching_notes }}</p>
+        </section>
+      {% endif %}
+    </div>
+  </div>
+
+  {# The steps, as data for play-viewer.js. #}
+  <script type="application/json" id="play-data">{{ {"steps": steps} | tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+  <script type="module" src="{{ url_for('static', filename='js/play-viewer.js') }}"></script>
+{% endblock %}

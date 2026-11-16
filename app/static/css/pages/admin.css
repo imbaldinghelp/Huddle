@@ -1,101 +1,5 @@
-/* Admin pages: players list and the temporary password page. */
-
-/* ---------- Players list ---------- */
-
-/* The list is one grid and each row borrows its columns (subgrid),
-   so names, status and buttons line up from row to row. */
-.roster {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) auto;
-  margin: 0;
-  padding: 0;
-  border: 1px solid var(--line);
-  background: var(--white);
-  list-style: none;
-}
-
-.roster-row {
-  display: grid;
-  grid-template-columns: subgrid;
-  grid-column: 1 / -1;
-  align-items: center;
-  gap: 8px 20px;
-  padding: 14px 18px;
-}
-
-.roster-row + .roster-row {
-  border-top: 1px solid var(--line);
-}
-
-.roster-person {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.roster-name {
-  overflow: hidden;
-  font-size: 14px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.roster-username {
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 13px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.is-inactive .roster-name {
-  color: var(--muted);
-}
-
-.roster-status {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
-}
-
-.roster-last-login,
-.roster-you {
-  color: var(--muted);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-
-.roster-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.roster-actions form {
-  margin: 0;
-}
-
-.roster-actions .button {
-  padding: 0 14px;
-}
-
-@media (max-width: 720px) {
-  .roster {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .roster-row {
-    padding: 16px;
-  }
-
-  .roster-actions {
-    justify-content: flex-start;
-    margin-top: 6px;
-  }
-}
+/* Admin pages: the temporary password page and the plays list.
+   The list rows themselves are shared: see "List rows" in ../components.css. */
 
 /* ---------- Temporary password page ---------- */
 
@@ -127,4 +31,20 @@
   font-size: 20px;
   overflow-wrap: anywhere;
   user-select: all;
+}
+
+/* ---------- Plays list ---------- */
+
+/* A play's title opens the editor. */
+a.row-title {
+  /* Padding makes the link taller to tap; the margin cancels it out so the
+     row keeps its height. */
+  margin: -4px 0;
+  padding: 4px 0;
+  text-decoration: none;
+}
+
+a.row-title:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
 }

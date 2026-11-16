@@ -6,7 +6,7 @@
 
 {% block content %}
   <a class="back-link" href="{{ url_for('admin.players') }}">Back to players</a>
-  <h1 class="page-title">Add a player.</h1>
+  <h1 class="page-title">Add a player</h1>
   <p class="page-intro">Huddle creates a temporary password for you to pass on. The player chooses their own the first time they log in.</p>
 
   <form class="form-stack" action="{{ url_for('admin.new_player') }}" method="POST">

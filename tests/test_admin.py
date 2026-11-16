@@ -14,6 +14,14 @@ ADMIN_PAGES = [
     ("POST", "/admin/players/1/reset-password"),
     ("POST", "/admin/players/1/deactivate"),
     ("POST", "/admin/players/1/reactivate"),
+    ("GET", "/admin/plays"),
+    ("GET", "/admin/plays/new"),
+    ("POST", "/admin/plays"),
+    ("GET", "/admin/plays/1/edit"),
+    ("POST", "/admin/plays/1"),
+    ("POST", "/admin/plays/1/publish"),
+    ("POST", "/admin/plays/1/unpublish"),
+    ("POST", "/admin/plays/1/delete"),
 ]
 
 

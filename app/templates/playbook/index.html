@@ -1,8 +1,25 @@
 {% extends "shell.html" %}
+{% from "components/text.html" import count_of %}
 
 {% block title %}Playbook | Huddle{% endblock %}
+{% block page_class %} page-medium{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/playbook.css') }}">
+{% endblock %}
 
 {% block content %}
-  <h1 class="page-title">Playbook.</h1>
-  <p class="page-intro">No plays have been added yet. They will show up here once your captain or coach publishes them.</p>
+  <h1 class="page-title">Playbook</h1>
+
+  <ul class="category-grid">
+    {% for category in categories %}
+      <li>
+        <a class="category-card" href="{{ url_for('playbook.category', slug=category.slug) }}">
+          <span class="icon category-icon icon-{{ category.slug }}" aria-hidden="true"></span>
+          <span class="category-name">{{ category.label }}</span>
+          <span class="category-count">{{ count_of(category.play_count, "play") }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
 {% endblock %}

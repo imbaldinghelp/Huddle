@@ -1,0 +1,126 @@
+{% extends "shell.html" %}
+
+{% block title %}{% if play %}Edit {{ play.title }}{% else %}New play{% endif %} | Huddle{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/play-editor.css') }}">
+{% endblock %}
+
+{% block content %}
+  <a class="back-link" href="{{ url_for('admin.plays') }}">Back to plays</a>
+  <div class="page-heading">
+    <h1 class="page-title">{% if play %}Edit play{% else %}New play{% endif %}</h1>
+    {% if play %}
+      <a class="button button-quiet" href="{{ url_for('playbook.play', play_id=play.id) }}">Preview</a>
+    {% endif %}
+  </div>
+
+  {# play-editor.js reads the save address and the CSRF token from here. #}
+  <div data-play-editor data-save-url="{{ save_url }}" data-csrf-token="{{ csrf_token() }}">
+    <section class="editor-section" aria-labelledby="details-title">
+      <h2 class="section-title" id="details-title">Details</h2>
+      <div class="details-grid">
+        <div class="field">
+          <label class="field-label" for="play-title">Title</label>
+          <div class="field-control">
+            <input id="play-title" type="text" maxlength="80" autocomplete="off" value="{{ play.title if play else '' }}">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="play-category">Category</label>
+          <div class="field-control">
+            <select id="play-category">
+              {% for category, label in categories.items() %}
+                <option value="{{ category.value }}"{% if play and play.category == category.value %} selected{% endif %}>{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="field details-wide">
+          <label class="field-label" for="play-summary">Summary</label>
+          <div class="field-control">
+            <input id="play-summary" type="text" maxlength="200" autocomplete="off"
+                   aria-describedby="play-summary-hint" value="{{ play.summary if play else '' }}">
+          </div>
+          <p class="field-hint" id="play-summary-hint">One line shown in the list of plays, for example when to run it.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="editor-section" aria-labelledby="diagram-title">
+      <h2 class="section-title" id="diagram-title">Diagram</h2>
+      <div class="editor-columns">
+        <div>
+          <div class="editor-toolbar" role="toolbar" aria-label="Drawing tools">
+            <button class="tool-button" type="button" data-tool="move"><span class="icon icon-move" aria-hidden="true"></span>Move</button>
+            <button class="tool-button" type="button" data-tool="cut"><span class="icon icon-cut" aria-hidden="true"></span>Cut</button>
+            <button class="tool-button" type="button" data-tool="pass"><span class="icon icon-pass" aria-hidden="true"></span>Pass</button>
+            <button class="tool-button" type="button" data-tool="dribble"><span class="icon icon-dribble" aria-hidden="true"></span>Dribble</button>
+            <button class="tool-button" type="button" data-tool="screen"><span class="icon icon-screen" aria-hidden="true"></span>Screen</button>
+            <button class="tool-button" type="button" data-tool="erase"><span class="icon icon-erase" aria-hidden="true"></span>Erase</button>
+          </div>
+          <div class="editor-hint-row">
+            <p class="editor-hint" role="status" data-hint></p>
+            <button class="text-button" type="button" data-undo>Undo</button>
+          </div>
+          <div data-court></div>
+          <label class="check-option">
+            <input type="checkbox" data-defenders>
+            Show defenders (X1 to X5)
+          </label>
+        </div>
+
+        <div class="editor-steps">
+          <h3 class="steps-title">Steps</h3>
+          <ol class="step-list" data-step-list></ol>
+          <button class="button button-quiet" type="button" data-add-step>Add step</button>
+
+          <div class="field">
+            <label class="field-label" for="step-description" data-description-label>Step 1 description</label>
+            <div class="field-control">
+              <textarea id="step-description" maxlength="500" rows="4" aria-describedby="step-description-hint"></textarea>
+            </div>
+            <p class="field-hint" id="step-description-hint">What happens in this step. A new step starts where this one ends.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="editor-section" aria-labelledby="notes-title">
+      <h2 class="section-title" id="notes-title">Notes</h2>
+      <div class="field">
+        <label class="field-label" for="play-notes">Coaching notes</label>
+        <div class="field-control">
+          <textarea id="play-notes" maxlength="4000" rows="5"
+                    aria-describedby="play-notes-hint">{{ play.coaching_notes if play else '' }}</textarea>
+        </div>
+        <p class="field-hint" id="play-notes-hint">Shown under the diagram: reads, options and common mistakes.</p>
+      </div>
+    </section>
+
+    <div class="editor-save">
+      <div role="alert" data-save-errors></div>
+      <div class="editor-save-buttons">
+        {% if play and play.is_published %}
+          <button class="button" type="button" data-save="published">Save changes</button>
+          <button class="button button-quiet" type="button" data-save="draft">Unpublish and save as draft</button>
+          <p class="editor-save-note">Published: players can see this play.</p>
+        {% else %}
+          <button class="button" type="button" data-save="published">Save and publish</button>
+          <button class="button button-quiet" type="button" data-save="draft">Save as draft</button>
+          <p class="editor-save-note">Draft: hidden from players until you publish.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {# The saved steps, as data for play-editor.js. Empty for a new play. #}
+  <script type="application/json" id="play-data">{{ {"steps": steps} | tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+  <script type="module" src="{{ url_for('static', filename='js/play-editor.js') }}"></script>
+{% endblock %}

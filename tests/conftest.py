@@ -6,6 +6,8 @@ from app import create_app
 from app.auth.service import create_user
 from app.constants import Role
 from app.extensions import db
+from app.playbook.service import save_play
+from app.playbook.validation import validate_play
 
 PASSWORD = "correct-horse-battery"
 
@@ -58,3 +60,45 @@ def player(app):
 def login(client, username, password=PASSWORD):
     """Log in through the real login form."""
     return client.post("/login", data={"username": username, "password": password})
+
+
+# ---------- Plays ----------
+
+OFFENSE_SPOTS = {"O1": (0.5, 0.65), "O2": (0.81, 0.45), "O3": (0.19, 0.45), "O4": (0.32, 0.25), "O5": (0.68, 0.25)}
+
+
+def diagram_data(**changes):
+    """One valid step diagram: five attackers, the ball with player 1, a pass and a cut."""
+    diagram = {
+        "players": [
+            {"id": player_id, "team": "offense", "x": x, "y": y} for player_id, (x, y) in OFFENSE_SPOTS.items()
+        ],
+        "ball": {"holder": "O1"},
+        "actions": [
+            {"type": "pass", "from": "O1", "to": "O2"},
+            {"type": "cut", "player": "O3", "path": [[0.3, 0.4], [0.45, 0.2]]},
+        ],
+    }
+    diagram.update(changes)
+    return diagram
+
+
+def play_data(**changes):
+    """A whole valid play, in the form the court editor sends it."""
+    play = {
+        "title": "Horns Flare",
+        "category": "offense",
+        "summary": "Flare screen for the shooter.",
+        "coaching_notes": "Set the screen and stay still.",
+        "status": "published",
+        "steps": [{"description": "1 passes to 2 on the wing.", "diagram": diagram_data()}],
+    }
+    play.update(changes)
+    return play
+
+
+def make_play(author, **changes):
+    """Save a play straight to the database, skipping the browser."""
+    clean, errors = validate_play(play_data(**changes))
+    assert not errors, errors
+    return save_play(clean, author=author)

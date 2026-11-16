@@ -1,11 +1,14 @@
-from flask import abort, flash, make_response, redirect, render_template, url_for
+from flask import abort, flash, jsonify, make_response, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from app.admin import admin_bp, service
 from app.admin.decorators import admin_required
 from app.admin.forms import ConfirmActionForm, CreatePlayerForm
+from app.constants import CATEGORY_LABELS, PlayStatus
 from app.extensions import db
 from app.models.user import User
+from app.playbook import service as play_service
+from app.playbook.validation import validate_play
 
 
 def get_user_or_404(user_id):
@@ -39,6 +42,9 @@ def show_credentials_once(user, temp_password, heading):
 @admin_required
 def index():
     return redirect(url_for("admin.players"))
+
+
+# ---------- Players ----------
 
 
 @admin_bp.route("/players")
@@ -95,3 +101,105 @@ def change_active_state(user_id, active):
         state = "reactivated" if active else "deactivated"
         flash(f"{user.display_name} has been {state}.", "success")
     return redirect(url_for("admin.players"))
+
+
+# ---------- Plays ----------
+
+
+def get_play_or_404(play_id):
+    play = play_service.get_play(play_id)
+    if play is None:
+        abort(404)
+    return play
+
+
+@admin_bp.route("/plays")
+@admin_required
+def plays():
+    return render_template(
+        "admin/plays.html", plays=play_service.list_all_plays(), action_form=ConfirmActionForm()
+    )
+
+
+@admin_bp.route("/plays/new")
+@admin_required
+def new_play():
+    return render_template(
+        "admin/play_editor.html",
+        play=None,
+        steps=[],
+        categories=CATEGORY_LABELS,
+        save_url=url_for("admin.create_play"),
+    )
+
+
+@admin_bp.route("/plays/<int:play_id>/edit")
+@admin_required
+def edit_play(play_id):
+    play = get_play_or_404(play_id)
+    return render_template(
+        "admin/play_editor.html",
+        play=play,
+        steps=play_service.steps_data(play),
+        categories=CATEGORY_LABELS,
+        save_url=url_for("admin.update_play", play_id=play.id),
+    )
+
+
+# The court editor saves with JavaScript: it posts the whole play as JSON
+# (with the CSRF token in a header) and gets JSON back.
+@admin_bp.route("/plays", methods=["POST"])
+@admin_required
+def create_play():
+    return save_play_from_editor(play=None)
+
+
+@admin_bp.route("/plays/<int:play_id>", methods=["POST"])
+@admin_required
+def update_play(play_id):
+    return save_play_from_editor(get_play_or_404(play_id))
+
+
+def save_play_from_editor(play):
+    clean, errors = validate_play(request.get_json(silent=True))
+    if errors:
+        return jsonify(errors=errors), 400
+
+    play = play_service.save_play(clean, author=current_user, play=play)
+    # The editor opens the address we send back; the message shows on that page.
+    if play.is_published:
+        flash(f"{play.title} is published.", "success")
+        return jsonify(redirect=url_for("admin.plays"))
+    flash(f"{play.title} is saved as a draft.", "success")
+    return jsonify(redirect=url_for("admin.edit_play", play_id=play.id))
+
+
+@admin_bp.route("/plays/<int:play_id>/publish", methods=["POST"])
+@admin_required
+def publish_play(play_id):
+    return change_play_status(play_id, PlayStatus.PUBLISHED, "is published.")
+
+
+@admin_bp.route("/plays/<int:play_id>/unpublish", methods=["POST"])
+@admin_required
+def unpublish_play(play_id):
+    return change_play_status(play_id, PlayStatus.DRAFT, "is back in drafts. Players can no longer see it.")
+
+
+def change_play_status(play_id, status, outcome):
+    require_valid_action_form()
+    play = get_play_or_404(play_id)
+    play_service.set_status(play, status)
+    flash(f"{play.title} {outcome}", "success")
+    return redirect(url_for("admin.plays"))
+
+
+@admin_bp.route("/plays/<int:play_id>/delete", methods=["POST"])
+@admin_required
+def delete_play(play_id):
+    require_valid_action_form()
+    play = get_play_or_404(play_id)
+    title = play.title
+    play_service.delete_play(play)
+    flash(f"{title} has been deleted.", "success")
+    return redirect(url_for("admin.plays"))

@@ -2,32 +2,29 @@
 
 {% block title %}Players | Huddle{% endblock %}
 
-{% block page_css %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/admin.css') }}">
-{% endblock %}
-
 {% block content %}
+  {% include "components/admin_tabs.html" %}
   <div class="page-heading">
-    <h1 class="page-title">Players.</h1>
+    <h1 class="page-title">Players</h1>
     <a class="button" href="{{ url_for('admin.new_player') }}">Add player</a>
   </div>
 
-  <ul class="roster">
+  <ul class="row-list">
     {% for user in users %}
-      <li class="roster-row{% if not user.is_active %} is-inactive{% endif %}">
-        <div class="roster-person">
-          <span class="roster-name">{{ user.display_name }}</span>
-          <span class="roster-username">{{ user.username }}</span>
+      <li class="row{% if not user.is_active %} is-inactive{% endif %}">
+        <div class="row-main">
+          <span class="row-title">{{ user.display_name }}</span>
+          <span class="row-sub">{{ user.username }}</span>
         </div>
 
-        <div class="roster-status">
+        <div class="row-status">
           {% if user.is_admin %}<span class="tag">Admin</span>{% endif %}
           {% if not user.is_active %}
             <span class="tag tag-muted">Deactivated</span>
           {% elif user.must_change_password %}
             <span class="tag tag-muted">Temporary password</span>
           {% endif %}
-          <span class="roster-last-login">
+          <span class="row-meta">
             {% if user.last_login_at %}
               Last login {{ user.last_login_at.strftime("%d %b %Y") }}
             {% else %}
@@ -36,9 +33,9 @@
           </span>
         </div>
 
-        <div class="roster-actions">
+        <div class="row-actions">
           {% if user.id == current_user.id %}
-            <span class="roster-you">This is you</span>
+            <span class="row-meta">This is you</span>
           {% else %}
             <form action="{{ url_for('admin.reset_player_password', user_id=user.id) }}" method="POST"
                   data-confirm="Reset the password for {{ user.display_name }}? Their current password will stop working.">

@@ -180,7 +180,7 @@ A warm paper-and-ink palette with a deep court green and one orange accent. Ever
 ### Hierarchy
 - **Display** (600, 76px, line-height 0.91; 64px under 1000px, 43px under 720px): the one big statement on a photo or hero area.
 - **Headline** (600, 54px, line-height 1; 48px under 720px): the page heading, for example "Welcome back."
-- **Page title** (600, 48px, line-height 1; 40px under 720px): the heading of every logged-in page, for example "Players."
+- **Page title** (600, 48px, line-height 1; 40px under 720px): the heading of every logged-in page, for example "Players"
 - **Title** (700, 25px, line-height 0.95): the HUDDLE wordmark (22px in the header); the size for card and section titles.
 - **Body** (400, 13px to 14px, line-height 1.6): descriptions, notes, list text.
 - **Input** (400, 16px): text typed into fields. 16px stops iPhones from zooming in on focus.
@@ -200,7 +200,7 @@ The login page is a two-panel split: team photo on the left (1.08 parts), the bo
 - **Under 720px:** the panels stack. The photo becomes a 265px banner on top and the form fills the rest with 24px side padding.
 - **Under 380px:** side padding drops to 19px. The minimum supported width is 320px.
 
-Logged-in pages share one shell: a 60px Board White header with a bottom Rule Line, then the content on Paper in a 960px column with 24px side padding (16px under 420px). Form pages use a narrow 438px column so the form is 390px wide, the same as on the login page. Lists sit in a Board White block with 1px Rule Line borders; on phones each row stacks into one column.
+Logged-in pages share one shell: a 60px Board White header with a bottom Rule Line, then the content on Paper in a 960px column with 24px side padding (16px under 420px). Form pages use a narrow 438px column so the form is 390px wide, the same as on the login page. The playbook's category and list pages use a medium 768px column (`.page-medium`). The play page and court editor use the full column: court on the left, text or steps on the right, stacking into one column under 860px. Lists sit in a Board White block with 1px Rule Line borders; on phones each row stacks into one column.
 
 Spacing follows the form's rhythm: 4px inside controls, 10px between a label and its field, 14px inside fields, 26px between form groups, 38px between a heading and the form, 48px as panel padding. Controls are tall enough to tap: 42px options, 50px fields, 52px buttons.
 
@@ -254,7 +254,27 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **Style:** 11px bold, 3px by 7px padding, square. Locker Green with Board White text for a role ("Admin"); Track Grey with Ink Soft text for a state ("Deactivated", "Temporary password").
 
 ### List Rows
-- **Style:** rows inside one Board White block with a 1px Rule Line border and 1px lines between rows; 14px by 18px padding. The main text is 14px weight 600, supporting text 13px or 12px Muted Grey. Columns line up across rows; on phones a row stacks.
+- **Style:** rows inside one Board White block with a 1px Rule Line border and 1px lines between rows; 14px by 18px padding. The main text is 14px weight 600, supporting text 13px or 12px Muted Grey. Columns line up across rows; on phones a row stacks. Classes `.row-list`, `.row`, `.row-title`, `.row-sub`, `.row-meta` in `components.css`.
+- **As links:** in the playbook each row is one link (`.play-link`); it turns Paper on hover.
+- **Empty:** when a list has nothing in it, a short `.empty-note` says what will appear there and how.
+
+### Category Card
+- **Style:** the four playbook categories as square Board White cards, two per row at every width, with a 1px Rule Line border. A Marker Ink icon sits above the name (Barlow Condensed 30px, 22px on phones, Locker Green) and the play count (13px Muted Grey).
+- **State:** on hover the border turns Marker Ink and the card gets the Selected lift shadow.
+
+### Icons
+- **Style:** line icons drawn for Huddle, with square ends and filled arrowheads, like the court diagram. Files in `app/static/icons/`, shown through the `.icon` class, which paints them in the current text colour.
+
+### Court Diagram
+- **Style:** a Board White court with Field Line markings, a Paper key and an Ink Soft boundary. Attackers are Board White circles with a Marker Ink outline and number. Defenders are a Locker Green X with a small number. Arrows are Marker Ink: solid for a cut, dashed for a pass, zigzag for a dribble, a bar across the end for a screen.
+- **The ball** is a small Court Orange dot on its holder. It is the one orange mark on the court.
+- **Step marks:** a row of thin bars under the court, one per step; the current step is Court Orange.
+
+### Toolbar
+- **Style:** the editor's drawing tools sit on a Track Grey track like segmented options: 42px tall, icon plus a 12px weight 600 label. The chosen tool turns Board White with the Selected lift shadow. The steps list uses the same track and lift for the current step.
+
+### Section Tabs
+- **Style:** text links (13px weight 600, Ink Soft) on a Rule Line, used to move between Players and Plays in the admin area. The current tab is Marker Ink with a 2px Marker Ink line under it; the header keeps the only orange line.
 
 ### Kicker Label
 - **Style:** 10px bold capitals in Locker Green above the login heading. Login page only: on every other page the heading stands alone.
