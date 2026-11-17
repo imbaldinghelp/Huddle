@@ -1,4 +1,4 @@
-/* Play page: the court viewer, step text and coaching notes.
+/* Play page: the court viewer, step text, coaching notes and the chat.
    The court itself is styled in ../components.css ("Court diagram"). */
 
 .play-status {
@@ -112,98 +112,198 @@
   white-space: pre-line;
 }
 
-/* ---------- Ask the assistant ---------- */
+/* ---------- Chat: ask the assistant about this play ---------- */
 
-.assistant {
-  max-width: 720px;
-  margin-top: 48px;
-  padding-top: 26px;
-  border-top: 1px solid var(--line);
-  /* Keeps the heading clear of the top edge when a link scrolls here. */
-  scroll-margin-top: 16px;
+.chat {
+  margin-top: 34px;
 }
 
-.assistant-title {
-  margin: 0 0 6px;
+.chat-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-bottom: 12px;
+}
+
+.chat-title {
+  margin: 0;
   font-family: var(--display-font);
   font-size: 25px;
   font-weight: 700;
   line-height: 0.95;
 }
 
-.assistant-intro {
-  max-width: 60ch;
-  margin: 8px 0 22px;
-  color: var(--ink-soft);
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.ask-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 18px;
-  margin-top: 14px;
-}
-
-.ask-actions .button {
-  min-width: 96px;
-}
-
-/* How many questions are left, or a note that the answer is on its way. */
-.ask-status {
+.chat-count {
   margin: 0;
-  color: var(--ink-soft);
-  font-size: 13px;
+  color: var(--muted);
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
-/* Shown in place of the question box once today's questions are used up.
-   It reuses the quiet .empty-note box: reaching the limit is not an error. */
-.ask-limit {
-  margin: 0;
-}
-
-.answer-list {
-  margin: 26px 0 0;
-  padding: 0;
+.chat-panel {
   border: 1px solid var(--line);
   background: var(--white);
-  list-style: none;
 }
 
-.answer {
-  padding: 18px;
+/* The conversation scrolls inside the panel, so the question box stays put. */
+.chat-messages {
+  display: flex;
+  max-height: 420px;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
-.answer + .answer {
-  border-top: 1px solid var(--line);
+.chat-messages:focus-visible {
+  outline-offset: -2px;
 }
 
-.answer-question {
-  margin: 0 0 8px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.answer-text {
-  max-width: 68ch;
+.chat-message {
   margin: 0;
-  color: var(--ink-soft);
   font-size: 14px;
   line-height: 1.6;
   overflow-wrap: anywhere;
-  /* Keeps the line breaks the assistant wrote. */
+  /* Keeps the line breaks that were typed or that the assistant wrote. */
   white-space: pre-line;
 }
 
-@media (max-width: 720px) {
-  .answer {
-    padding: 16px;
+/* Your own messages sit on the right in a grey block; replies are plain text. */
+.chat-message-user {
+  max-width: 85%;
+  align-self: flex-end;
+  padding: 9px 13px;
+  background: var(--track);
+}
+
+.chat-message-assistant {
+  max-width: 62ch;
+  color: var(--ink-soft);
+}
+
+/* Three dots that pulse while the assistant is working on a reply. */
+.chat-thinking {
+  display: flex;
+  height: 22px;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-thinking span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  animation: chat-pulse 1.2s ease-in-out infinite;
+}
+
+.chat-thinking span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.chat-thinking span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes chat-pulse {
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
   }
+
+  30% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-thinking span {
+    animation: none;
+  }
+}
+
+/* Before the first question. */
+.chat-empty {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.chat-empty p {
+  margin: 0;
+}
+
+.chat-starters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chat-starter {
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1px solid var(--field-line);
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  transition: border-color 160ms ease;
+}
+
+.chat-starter:hover {
+  border-color: var(--ink);
+}
+
+.chat-error {
+  margin: 0 12px 12px;
+}
+
+/* The question box, fixed at the bottom of the panel. */
+.chat-composer {
+  padding: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.chat-box {
+  align-items: flex-end;
+  gap: 4px;
+  padding: 3px;
+}
+
+/* One line tall to start; play-chat.js grows it as you type. */
+.chat-box textarea {
+  min-height: 42px;
+  max-height: 140px;
+  padding: 9px 10px;
+  resize: none;
+}
+
+.chat-box textarea::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.chat-send {
+  min-height: 42px;
+  flex: none;
+}
+
+.chat-limit {
+  margin: 0;
+  padding: 14px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 @media (min-width: 860px) {
@@ -211,5 +311,14 @@
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     align-items: start;
     gap: 40px;
+  }
+}
+
+/* On a wide and tall enough screen the court stays in view while the notes
+   and the chat scroll past, so you can ask while looking at the play. */
+@media (min-width: 860px) and (min-height: 720px) {
+  .play-stage {
+    position: sticky;
+    top: 16px;
   }
 }

@@ -1,11 +1,12 @@
 {% extends "shell.html" %}
 {% from "components/forms.html" import text_field %}
+{% from "components/breadcrumbs.html" import breadcrumbs %}
 
 {% block title %}Add player | Huddle{% endblock %}
 {% block page_class %} page-narrow{% endblock %}
 
 {% block content %}
-  <a class="back-link" href="{{ url_for('admin.players') }}">Back to players</a>
+  {{ breadcrumbs([("Admin", url_for("admin.index")), ("Players", url_for("admin.players"))], "Add player") }}
   <h1 class="page-title">Add a player</h1>
   <p class="page-intro">Huddle creates a temporary password for you to pass on. The player chooses their own the first time they log in.</p>
 

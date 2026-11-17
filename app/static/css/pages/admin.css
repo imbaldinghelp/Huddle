@@ -1,4 +1,4 @@
-/* Admin pages: the temporary password page and the plays list.
+/* Admin pages: the overview, the temporary password page and the plays list.
    The list rows themselves are shared: see "List rows" in ../components.css. */
 
 /* ---------- Temporary password page ---------- */
@@ -31,6 +31,17 @@
   font-size: 20px;
   overflow-wrap: anywhere;
   user-select: all;
+}
+
+/* ---------- Overview ---------- */
+
+/* Here the second line explains the section, so it wraps instead of being cut. */
+.overview .row-sub {
+  white-space: normal;
+}
+
+.overview + .page-note {
+  margin-bottom: 0;
 }
 
 /* ---------- Plays list ---------- */

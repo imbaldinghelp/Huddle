@@ -109,3 +109,49 @@ def test_play_pages_require_login(client, admin):
         response = client.get(path)
         assert response.status_code == 302
         assert response.headers["Location"].startswith("/login")
+
+
+# ---------- What admins see in the playbook ----------
+
+
+def test_admin_gets_a_new_play_button_on_a_category(client, admin):
+    login(client, "coach")
+
+    page = client.get("/playbook/defense").text
+
+    # It opens the editor with this category already chosen.
+    assert 'href="/admin/plays/new?category=defense"' in page
+    assert "Choose New play" in page
+
+
+def test_player_gets_no_new_play_button(client, admin, player):
+    make_play(admin)
+    login(client, "wei")
+
+    assert "New play" not in client.get("/playbook/offense").text
+    assert "New play" not in client.get("/playbook/baseline").text
+
+
+def test_admin_sees_drafts_in_a_category_marked_as_drafts(client, admin):
+    make_play(admin, title="Horns Flare")
+    make_play(admin, title="Secret Draft", status="draft")
+    login(client, "coach")
+
+    page = client.get("/playbook/offense").text
+
+    assert "Horns Flare" in page
+    assert "Secret Draft" in page
+    assert page.count(">Draft<") == 1
+
+
+def test_pages_have_a_trail_back_to_the_playbook(client, admin, player):
+    play = make_play(admin, title="Horns Flare", category="offense")
+    login(client, "wei")
+
+    category_page = client.get("/playbook/offense").text
+    play_page = client.get(f"/plays/{play.id}").text
+
+    assert 'aria-label="Breadcrumb"' in category_page
+    assert '<a href="/playbook">Playbook</a>' in category_page
+    assert '<a href="/playbook">Playbook</a>' in play_page
+    assert '<a href="/playbook/offense">Offense</a>' in play_page

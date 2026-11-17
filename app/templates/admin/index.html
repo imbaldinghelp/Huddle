@@ -1,0 +1,45 @@
+{% extends "shell.html" %}
+{% from "components/text.html" import count_of %}
+
+{% block title %}Admin | Huddle{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+  {% include "components/admin_tabs.html" %}
+  <h1 class="page-title">Admin</h1>
+  <p class="page-intro">Manage the playbook and the people who can log in.</p>
+
+  <ul class="row-list overview">
+    <li class="row">
+      <div class="row-main">
+        <a class="row-title" href="{{ url_for('admin.plays') }}">Plays</a>
+        <span class="row-sub">Draw plays in the court editor, then publish them for the team.</span>
+      </div>
+      <div class="row-status">
+        <span class="row-meta">{{ plays.published }} published, {{ count_of(plays.drafts, "draft") }}</span>
+      </div>
+      <div class="row-actions">
+        <a class="button" href="{{ url_for('admin.new_play') }}">New play</a>
+        <a class="button button-quiet" href="{{ url_for('admin.plays') }}">All plays</a>
+      </div>
+    </li>
+    <li class="row">
+      <div class="row-main">
+        <a class="row-title" href="{{ url_for('admin.players') }}">Players</a>
+        <span class="row-sub">Create accounts, reset passwords, and deactivate people who leave.</span>
+      </div>
+      <div class="row-status">
+        <span class="row-meta">{{ users.active }} active{% if users.deactivated %}, {{ users.deactivated }} deactivated{% endif %}</span>
+      </div>
+      <div class="row-actions">
+        <a class="button" href="{{ url_for('admin.new_player') }}">Add player</a>
+        <a class="button button-quiet" href="{{ url_for('admin.players') }}">All players</a>
+      </div>
+    </li>
+  </ul>
+
+  <p class="page-note">You can also start a play from the playbook: open a category, such as Offense, and choose New play.</p>
+{% endblock %}

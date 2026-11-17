@@ -137,6 +137,10 @@ document.addEventListener("keydown", (event) => {
   if (event.altKey || event.ctrlKey || event.metaKey) {
     return;
   }
+  // While someone is typing in the chat, the arrow keys move their cursor.
+  if (event.target.closest("textarea, input")) {
+    return;
+  }
   if (event.key === "ArrowLeft") {
     goTo(current - 1);
   } else if (event.key === "ArrowRight") {

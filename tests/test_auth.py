@@ -108,4 +108,4 @@ def test_header_hides_admin_link_from_players(client, player):
 def test_header_shows_admin_link_to_admins(client, admin):
     login(client, "coach")
 
-    assert "/admin/players" in client.get("/playbook").text
+    assert 'href="/admin/"' in client.get("/playbook").text

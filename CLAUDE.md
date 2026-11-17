@@ -57,10 +57,10 @@ Follow the tree in `docs/BRIEF.md` section 5. A folder is created in the phase t
 - Routes stay thin: read the request, call a function or service, return a response.
 - Every admin route uses `@admin_required` (`app/admin/decorators.py`). Every form, including one-button action forms, carries a CSRF token.
 - Never store, log or flash a raw password. Temporary passwords are rendered once, straight into the response.
-- After changing a model, create a migration and commit it with the change.
+- After changing a model, create a migration and commit it with the change. Never edit or replace a migration that already exists: add a new one.
 - The court diagram JSON is documented in `app/static/js/court/README.md` and checked on the server in `app/playbook/validation.py`. Change the format in all three places together: README, validation (with its tests) and the JS.
 - All court drawing goes through `app/static/js/court/`; the viewer and editor never draw on their own.
-- The assistant has no page of its own: the question box sits on the play page (`/plays/<id>`), which handles the POST. `app/assistant/service.py` is the only file that talks to the LLM, through LiteLLM. Models and the daily limit come from env (`LLM_MODEL`, `LLM_FALLBACK_MODELS`, `ASSISTANT_DAILY_LIMIT`). Only published plays are sent. Tests replace `service.call_llm` with a fake and never call a real model.
+- The assistant is a chat on the play page (`components/play_chat.html` + `static/js/play-chat.js`). Questions go as JSON to `POST /plays/<id>/ask` in `app/assistant/routes.py`. `app/assistant/service.py` is the only file that talks to the LLM, through LiteLLM. Models and the daily limit come from env (`LLM_MODEL`, `LLM_FALLBACK_MODELS`, `ASSISTANT_DAILY_LIMIT`). Only published plays are sent, plus the last few messages of today's chat about that play. Tests replace `service.call_llm` with a fake and never call a real model.
 - CSS: one file per page in `static/css/pages/`; shared styles in `components.css`; colours and fonts only through tokens in `tokens.css`.
 - No inline styles and no inline scripts, except tiny bootstraps.
 - Link static files with `url_for('static', ...)` and routes with `url_for('<blueprint>.<view>')`.
@@ -81,9 +81,7 @@ Follow the tree in `docs/BRIEF.md` section 5. A folder is created in the phase t
 
 Do these only when asked, or fold them into a phase when Brian says so. Mention them when a related page is touched.
 
-- General UI/UX improvements and polish across the pages. The app should be easier to use and nicer to look at overall.
-- Admin is confusing: it is hard to see where to add a new play. Preferred fix (Brian): admins see a "New play" button on the category page, at the top right level with the category heading (e.g. Offense), so they create a play right where they browse, instead of Admin > Plays > New play. The category should be pre-selected in the editor. Also consider the same for "Add player", and make clearer what the Admin link in the header leads to.
-- Navigation between pages: make the "Back to ..." links more visible and obvious (today they are small text links), and add breadcrumbs.
-- Replace the Sideline and Baseline category icons with better ones (`app/static/icons/category-sideline.svg`, `category-baseline.svg`).
-- Assistant look and feel: "Ask about this play" reads like a Q&A board where you post a question (a form plus a list of past questions). Make it feel like a chat, like ChatGPT, Gemini or Claude: a message-style conversation with the question and the reply as turns, a input bar fixed at the bottom of the panel, the reply appearing in place of a "thinking" indicator, and ideally follow-up questions that remember the conversation (today each question is answered on its own). Keep it on the play page, and keep Huddle's own look (DESIGN.md) rather than copying theirs.
+- More UI/UX polish as Brian spots things. Done on 2026-11-17: chat-style assistant, "New play" on category pages, admin overview page, breadcrumbs, new Sideline and Baseline icons.
+- Assistant chat, next steps: a "New chat" button to clear the conversation (today it resets each day), a quick way to reach the chat on phones (it sits below the court and notes), and rendering simple formatting such as lists in replies (replies are plain text today).
+- After saving a play from the editor, go back to where the admin came from (today a published play always returns to Admin > Plays).
 - Keyboard-only drawing in the court editor (the court is mouse/touch only today).

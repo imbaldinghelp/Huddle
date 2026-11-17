@@ -1,0 +1,19 @@
+{#
+  The trail at the top of a page that shows where you are and leads back up.
+  Import with:
+    {% from "components/breadcrumbs.html" import breadcrumbs %}
+
+  breadcrumbs([("Playbook", url_for("playbook.index"))], "Offense")
+    trail     the pages above this one, as (label, address) pairs
+    current   the name of the page you are on (not a link)
+#}
+{% macro breadcrumbs(trail, current) %}
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <ol>
+      {% for label, url in trail %}
+        <li><a href="{{ url }}">{{ label }}</a></li>
+      {% endfor %}
+      <li class="crumbs-current" aria-current="page">{{ current }}</li>
+    </ol>
+  </nav>
+{% endmacro %}

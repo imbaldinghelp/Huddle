@@ -58,11 +58,13 @@ def register_blueprints(app):
     # Imported here, not at the top, so blueprints can import from `app`
     # (for example the database) without a circular import.
     from app.admin import admin_bp
+    from app.assistant import assistant_bp
     from app.auth import auth_bp
     from app.playbook import playbook_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(playbook_bp)
+    app.register_blueprint(assistant_bp)
     app.register_blueprint(admin_bp, url_prefix="/admin")
 
 

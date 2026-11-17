@@ -1,6 +1,6 @@
 """Player management done by admins: create, reset password, deactivate."""
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.auth.service import create_user, generate_temp_password
 from app.constants import Role
@@ -16,6 +16,13 @@ def list_users():
     """Everyone with an account: active first, then by name."""
     query = select(User).order_by(User.is_active.desc(), User.display_name)
     return db.session.scalars(query).all()
+
+
+def count_users():
+    """How many accounts can log in and how many are deactivated, for the overview."""
+    query = select(User.is_active, func.count(User.id)).group_by(User.is_active)
+    counts = dict(db.session.execute(query).all())
+    return {"active": counts.get(True, 0), "deactivated": counts.get(False, 0)}
 
 
 def create_player(username, display_name):

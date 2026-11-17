@@ -134,8 +134,3 @@
   }
 }
 
-/* Space between the page title and the list (or the note that replaces it). */
-.page-title + .play-list,
-.page-title + .empty-note {
-  margin-top: 26px;
-}

@@ -1,4 +1,5 @@
 {% extends "shell.html" %}
+{% from "components/breadcrumbs.html" import breadcrumbs %}
 
 {% block title %}{{ play.title }} | Huddle{% endblock %}
 
@@ -7,7 +8,10 @@
 {% endblock %}
 
 {% block content %}
-  <a class="back-link" href="{{ url_for('playbook.category', slug=play.category) }}">Back to {{ play.category_label }}</a>
+  {{ breadcrumbs(
+    [("Playbook", url_for("playbook.index")), (play.category_label, url_for("playbook.category", slug=play.category))],
+    play.title
+  ) }}
   <div class="page-heading">
     <h1 class="page-title">{{ play.title }}</h1>
     {% if current_user.is_admin %}
@@ -22,6 +26,7 @@
   {% endif %}
 
   <div class="play-layout" data-play-viewer>
+    {# On wide screens the court stays in view while the right column scrolls. #}
     <div class="play-stage">
       {# play-viewer.js draws the court in here. #}
       <div data-court></div>
@@ -33,7 +38,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="play-side">
       <section aria-live="polite">
         <h2 class="step-count" data-step-count>Step 1 of {{ steps | length }}</h2>
         <p class="step-description" data-step-description></p>
@@ -52,12 +57,13 @@
           <p>{{ play.coaching_notes }}</p>
         </section>
       {% endif %}
+
+      {# Drafts are not in the playbook yet, so there is nothing to ask about. #}
+      {% if play.is_published %}
+        {% include "components/play_chat.html" %}
+      {% endif %}
     </div>
   </div>
-
-  {% if play.is_published %}
-    {% include "components/play_assistant.html" %}
-  {% endif %}
 
   {# The steps, as data for play-viewer.js. #}
   <script type="application/json" id="play-data">{{ {"steps": steps} | tojson }}</script>
@@ -65,5 +71,5 @@
 
 {% block scripts %}
   <script type="module" src="{{ url_for('static', filename='js/play-viewer.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/assistant.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/play-chat.js') }}" defer></script>
 {% endblock %}

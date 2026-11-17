@@ -2,9 +2,10 @@ import re
 
 import pytest
 
-from app.auth.service import WRONG_LOGIN_MESSAGE, find_user
+from app.auth.service import WRONG_LOGIN_MESSAGE, create_user, find_user
 from app.constants import Role
-from tests.conftest import PASSWORD, login
+from app.extensions import db
+from tests.conftest import PASSWORD, login, make_play
 
 ADMIN_PAGES = [
     ("GET", "/admin/"),
@@ -142,3 +143,32 @@ def test_actions_on_a_missing_user_give_404(client, admin):
     login(client, "coach")
 
     assert client.post("/admin/players/999/deactivate").status_code == 404
+
+
+# ---------- Overview ----------
+
+
+def test_admin_overview_shows_counts_and_the_main_actions(client, admin, player):
+    create_user("gone", "Gone Guy", Role.PLAYER, PASSWORD, must_change_password=False).is_active = False
+    db.session.commit()
+    make_play(admin, title="Horns Flare")
+    make_play(admin, title="Motion Strong")
+    make_play(admin, title="Secret Draft", status="draft")
+    login(client, "coach")
+
+    page = client.get("/admin/").text
+
+    assert "2 published, 1 draft" in page
+    assert "2 active, 1 deactivated" in page
+    assert 'href="/admin/plays/new"' in page
+    assert 'href="/admin/players/new"' in page
+
+
+def test_admin_overview_with_nothing_yet(client, admin):
+    login(client, "coach")
+
+    page = client.get("/admin/").text
+
+    assert "0 published, 0 drafts" in page
+    assert "1 active" in page
+    assert "deactivated" not in page.split("Create accounts")[1].split("</li>")[0]
