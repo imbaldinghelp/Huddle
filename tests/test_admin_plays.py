@@ -183,3 +183,31 @@ def test_editor_save_with_csrf_token_in_the_header_works(csrf_client):
 
     assert response.status_code == 200
     assert len(all_plays()) == 1
+
+
+def test_new_play_from_a_category_has_that_category_chosen(client, admin):
+    login(client, "coach")
+
+    page = client.get("/admin/plays/new?category=sideline").text
+
+    assert '<option value="sideline" selected>Sideline</option>' in page
+    assert page.count(" selected>") == 1
+
+
+def test_new_play_ignores_an_unknown_category(client, admin):
+    login(client, "coach")
+
+    response = client.get("/admin/plays/new?category=trick-shots")
+
+    assert response.status_code == 200
+    assert " selected>" not in response.text
+
+
+def test_editing_keeps_the_plays_own_category_chosen(client, admin):
+    play = make_play(admin, category="baseline")
+    login(client, "coach")
+
+    page = client.get(f"/admin/plays/{play.id}/edit?category=offense").text
+
+    assert '<option value="baseline" selected>Baseline</option>' in page
+    assert page.count(" selected>") == 1

@@ -36,6 +36,12 @@ a:hover {
   color: var(--ink);
 }
 
+/* An element with the hidden attribute stays hidden, even when a class
+   gives it a display value such as flex. */
+[hidden] {
+  display: none !important;
+}
+
 ::selection {
   background: var(--selection);
   color: var(--ink);

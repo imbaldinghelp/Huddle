@@ -1,0 +1,49 @@
+{#
+  The chat on the play page. Expects play and assistant (today's messages and
+  the count of questions left) from the play route. play-chat.js sends each
+  question to the address in data-ask-url and adds the reply to the list.
+#}
+{% from "components/text.html" import count_of %}
+
+<section class="chat" aria-labelledby="chat-title" data-chat
+         data-ask-url="{{ url_for('assistant.ask', play_id=play.id) }}"
+         data-csrf-token="{{ csrf_token() }}">
+  <div class="chat-heading">
+    <h2 class="chat-title" id="chat-title">Ask about this play</h2>
+    <p class="chat-count" data-chat-count>{{ count_of(assistant.questions_left, "question") }} left today</p>
+  </div>
+
+  <div class="chat-panel">
+    {# tabindex lets keyboard users scroll a long conversation. #}
+    <div class="chat-messages" role="log" aria-label="Conversation" tabindex="0" data-chat-messages>
+      {% for chat in assistant.chats %}
+        <p class="chat-message chat-message-user"><span class="visually-hidden">You: </span>{{ chat.question }}</p>
+        <p class="chat-message chat-message-assistant"><span class="visually-hidden">Assistant: </span>{{ chat.answer }}</p>
+      {% endfor %}
+
+      {# Shown until the first question: what this is, and three questions to start with. #}
+      <div class="chat-empty" data-chat-empty{% if assistant.chats %} hidden{% endif %}>
+        <p>Ask anything about {{ play.title }}. Answers come only from what is written in the playbook.</p>
+        {% if assistant.questions_left > 0 %}
+          <ul class="chat-starters" aria-label="Questions to start with">
+            <li><button class="chat-starter" type="button" data-chat-starter>Walk me through this play.</button></li>
+            <li><button class="chat-starter" type="button" data-chat-starter>What is each player's job?</button></li>
+            <li><button class="chat-starter" type="button" data-chat-starter>What are the coaching points?</button></li>
+          </ul>
+        {% endif %}
+      </div>
+    </div>
+
+    <p class="form-message chat-error" role="alert" data-chat-error hidden></p>
+
+    <form class="chat-composer" data-chat-form{% if assistant.questions_left <= 0 %} hidden{% endif %}>
+      <label class="visually-hidden" for="chat-input">Your question</label>
+      <div class="field-control chat-box">
+        <textarea id="chat-input" rows="1" maxlength="500" placeholder="Ask a question" required data-chat-input></textarea>
+        <button class="button chat-send" type="submit" data-chat-send>Send</button>
+      </div>
+    </form>
+    {# Takes the place of the question box once today's questions are used up. #}
+    <p class="chat-limit" data-chat-limit{% if assistant.questions_left > 0 %} hidden{% endif %}>{{ assistant.limit_message }}</p>
+  </div>
+</section>

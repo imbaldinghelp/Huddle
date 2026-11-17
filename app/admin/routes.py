@@ -41,7 +41,10 @@ def show_credentials_once(user, temp_password, heading):
 @admin_bp.route("/")
 @admin_required
 def index():
-    return redirect(url_for("admin.players"))
+    """The overview: what an admin can manage, with the two main actions."""
+    return render_template(
+        "admin/index.html", users=service.count_users(), plays=play_service.count_plays()
+    )
 
 
 # ---------- Players ----------
@@ -124,11 +127,13 @@ def plays():
 @admin_bp.route("/plays/new")
 @admin_required
 def new_play():
+    # "New play" on a category page passes that category along (?category=offense).
     return render_template(
         "admin/play_editor.html",
         play=None,
         steps=[],
         categories=CATEGORY_LABELS,
+        selected_category=play_service.find_category(request.args.get("category", "")),
         save_url=url_for("admin.create_play"),
     )
 
@@ -142,6 +147,7 @@ def edit_play(play_id):
         play=play,
         steps=play_service.steps_data(play),
         categories=CATEGORY_LABELS,
+        selected_category=play.category,
         save_url=url_for("admin.update_play", play_id=play.id),
     )
 

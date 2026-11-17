@@ -262,9 +262,13 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **Style:** the four playbook categories as square Board White cards, two per row at every width, with a 1px Rule Line border. A Marker Ink icon sits above the name (Barlow Condensed 30px, 22px on phones, Locker Green) and the play count (13px Muted Grey).
 - **State:** on hover the border turns Marker Ink and the card gets the Selected lift shadow.
 
-### Ask About This Play
-- **Style:** a section at the bottom of the play page, set off by a Rule Line, with a Barlow Condensed 25px heading. Its answers are a question-and-answer sheet, not chat bubbles: one Board White block with a 1px Rule Line border and 1px lines between entries, newest first, showing only today's questions about this play. The question is 14px weight 600 Marker Ink; the answer is 14px Ink Soft and keeps its line breaks. The question box sits above the list, with a compact button and a 13px Ink Soft count of the questions left. It is not shown on drafts.
-- **States:** while an answer loads the button is disabled and reads "Thinking...". A failed answer is an error form message above the button. When the day's questions are used up, the question box is replaced by the quiet empty note, not an error.
+### Chat (Ask About This Play)
+- **Where:** on the play page, in the right column under the coaching notes (under the court on phones). On wide, tall screens the court stays in view while this column scrolls. Not shown on drafts.
+- **Style:** a Barlow Condensed 25px heading with a 12px Muted Grey count of the questions left, over a Board White panel with a 1px Rule Line border. Messages are turns, like a chat app, in Huddle's own shapes: your message sits on the right in a square Track Grey block; the reply is plain 14px Ink Soft text on the left. The conversation scrolls inside the panel (420px at most) and the question box stays at the bottom: a normal field with a 42px Send button inside it.
+- **States:** before the first message, a short note and three ready-made questions as square outlined buttons. While a reply loads, three 6px Muted Grey dots pulse (still under reduced motion) and Send is disabled. A failed reply puts the question back in the box and shows an error form message above it. When the day's questions are used up, a quiet note replaces the question box.
+
+### Breadcrumbs
+- **Style:** the trail at the top of every page below a top-level one ("Playbook / Offense / Horns Flare"), 13px weight 600 on a Rule Line, the same strip as the section tabs. Links are Marker Ink and underlined (Court Orange Deep on hover), separated by a Muted Grey slash; the current page is Muted Grey and not a link. Each link is 44px tall. Build it with the `breadcrumbs` macro in `templates/components/breadcrumbs.html`. It replaces the old small "Back to ..." links.
 
 ### Icons
 - **Style:** line icons drawn for Huddle, with square ends and filled arrowheads, like the court diagram. Files in `app/static/icons/`, shown through the `.icon` class, which paints them in the current text colour.
@@ -278,7 +282,7 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **Style:** the editor's drawing tools sit on a Track Grey track like segmented options: 42px tall, icon plus a 12px weight 600 label. The chosen tool turns Board White with the Selected lift shadow. The steps list uses the same track and lift for the current step.
 
 ### Section Tabs
-- **Style:** text links (13px weight 600, Ink Soft) on a Rule Line, used to move between Players and Plays in the admin area. The current tab is Marker Ink with a 2px Marker Ink line under it; the header keeps the only orange line.
+- **Style:** text links (13px weight 600, Ink Soft) on a Rule Line, used to move between Overview, Plays and Players in the admin area. The current tab is Marker Ink with a 2px Marker Ink line under it; the header keeps the only orange line.
 
 ### Kicker Label
 - **Style:** 10px bold capitals in Locker Green above the login heading. Login page only: on every other page the heading stands alone.

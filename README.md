@@ -2,7 +2,7 @@
 
 Huddle is a private basketball playbook for SUTD Basketball, built with Flask.
 
-**Status:** Phase 3 (AI assistant) is done. Admins manage player accounts and build plays in the court editor, as drafts or published. Players log in, browse the four categories, step through each published play and ask the assistant questions about the playbook. Deployment arrives in Phase 4. The full plan is in [docs/BRIEF.md](docs/BRIEF.md).
+**Status:** Phase 3 (AI assistant) is done. Admins manage player accounts and build plays in the court editor, as drafts or published. Players log in, browse the four categories, step through each published play and chat with the assistant about it. Deployment arrives in Phase 4. The full plan is in [docs/BRIEF.md](docs/BRIEF.md).
 
 ## Set up from scratch
 
@@ -95,7 +95,7 @@ Open <http://127.0.0.1:5000> in your browser and log in with the admin account. 
 python -m pytest
 ```
 
-You should see `193 passed`.
+You should see `211 passed`.
 
 ### Mac (Terminal)
 
@@ -182,7 +182,7 @@ Mac note: port 5000 is taken by AirPlay Receiver on recent macOS, which is why t
 python -m pytest
 ```
 
-You should see `193 passed`.
+You should see `211 passed`.
 
 ### If something goes wrong
 
@@ -224,7 +224,7 @@ These commands are the same on Windows and Mac.
 
 ## Accounts
 
-- **Add a player:** log in as an admin, open **Admin**, choose **Add player**. Huddle shows a temporary password once; send it to the player. They must choose their own password at first login.
+- **Add a player:** log in as an admin, open **Admin** and choose **Add player**. Huddle shows a temporary password once; send it to the player. They must choose their own password at first login.
 - **Forgotten password:** an admin opens **Admin** and chooses **Reset password** for that person. This gives a new temporary password.
 - **Someone leaves the team:** choose **Deactivate**. They can no longer log in, and can be reactivated later. Accounts are never deleted.
 - **Change your own password:** click your name in the header.
@@ -234,9 +234,10 @@ These commands are the same on Windows and Mac.
 
 Players open the **Playbook**, pick one of the four categories (Offense, Defense, Sideline, Baseline), then a play. On the play page they step through the diagram with **Previous** and **Next** (or the left and right arrow keys), or press **Play** to watch the players move.
 
-Admins manage plays under **Admin > Plays**:
+Admins create and manage plays:
 
-- **Create a play:** choose **New play**. Fill in the title and category, then build the diagram in the court editor.
+- **Create a play:** open a category in the Playbook, such as **Offense**, and choose **New play** at the top right. The editor opens with that category already chosen. **Admin > New play** does the same without a category. Fill in the title, then build the diagram in the court editor.
+- **Find your drafts:** admins see drafts in the category lists, marked **Draft**. Players never see them. **Admin > Plays** lists every play in one place.
 - **Court editor tools:** **Move** drags players (and the ball, onto another player). **Cut**, **Dribble** and **Screen** are drawn by dragging from a player. **Pass** is dragged from the player with the ball to a teammate. **Erase** removes an arrow you click. **Undo** (or Ctrl+Z) steps back.
 - **Steps:** **Add step** starts a new step with everyone where the last one left them. Steps can be moved up, moved down and removed, and each has its own description.
 - **Draft or published:** **Save as draft** keeps a play hidden from players. **Save and publish** makes it visible. You can also publish, unpublish and delete from the plays list.
@@ -246,12 +247,13 @@ The diagram format is documented in [app/static/js/court/README.md](app/static/j
 
 ## Assistant
 
-Every play page has an **Ask about this play** box under the diagram, so you can ask while looking at the play, for example "Who sets the screen?" or "What if the defender goes under?".
+Every published play has an **Ask about this play** chat next to the diagram (under it on a phone). Type a question and press Enter, or tap one of the ready-made questions, for example "Walk me through this play."
 
-- **What it knows:** the text of every published play (title, category, summary, coaching notes and step descriptions), and which play you are looking at, so "this play" and "it" work. Drafts are never sent, and a draft has no question box. It does not see the diagrams, so write what happens in each step's description.
-- **What it does not do:** it is told to answer only from the playbook and to say so when the answer is not there. It cannot change anything in Huddle. Each question is answered on its own; it does not remember the one before.
+- **What it knows:** the text of every published play (title, category, summary, coaching notes and step descriptions), and which play you are looking at, so "this play" and "it" work. Drafts are never sent, and a draft has no chat. It does not see the diagrams, so write what happens in each step's description.
+- **Follow-up questions:** it remembers the last few messages of today's chat about that play, so you can ask "and what happens after that?". Each play has its own chat, and a chat starts fresh each day.
+- **What it does not do:** it is told to answer only from the playbook and to say so when the answer is not there. It cannot change anything in Huddle.
 - **Daily limit:** each person gets 20 questions a day in total, across all plays (`ASSISTANT_DAILY_LIMIT`). The count starts again at midnight Singapore time. Only answered questions count.
-- **What is saved:** each question and its answer, with the play it was about, in the `chat_logs` table. A play page shows a person their own questions about that play from today.
+- **What is saved:** each question and its answer, with the play it was about, in the `chat_logs` table. Only you see your own chats.
 
 **Set it up (once).** The assistant uses a free AI model through the [LiteLLM](https://docs.litellm.ai/) package.
 
@@ -311,24 +313,24 @@ Huddle/
 │   │   ├── forms.py
 │   │   ├── service.py       # account rules (check login, create user, passwords)
 │   │   └── hooks.py         # runs on every request: load user, force password change
-│   ├── admin/               # admin-only pages: players, plays, court editor
+│   ├── admin/               # admin-only pages: overview, players, plays, court editor
 │   │   ├── routes.py
 │   │   ├── forms.py
-│   │   ├── service.py       # create player, reset password, deactivate
+│   │   ├── service.py       # create player, reset password, deactivate, counts
 │   │   └── decorators.py    # @admin_required
 │   ├── playbook/            # player pages: categories, play lists, play viewer
 │   │   ├── routes.py
 │   │   ├── service.py       # play rules (find, save, publish, delete)
 │   │   └── validation.py    # checks a play sent by the court editor
-│   ├── assistant/           # answers questions about a play (no pages of its own)
-│   │   ├── forms.py         # the question box
-│   │   └── service.py       # daily limit, prompt, and the only code that calls the LLM
+│   ├── assistant/           # the chat about a play
+│   │   ├── routes.py        # receives a question from the play page, returns the answer
+│   │   └── service.py       # daily limit, memory, prompt, and the only code that calls the LLM
 │   ├── templates/
 │   │   ├── base.html        # bare page skeleton
 │   │   ├── shell.html       # logged-in layout: header + content
-│   │   ├── components/      # site_header, flash_messages, forms, admin_tabs, text, play_assistant
+│   │   ├── components/      # site_header, breadcrumbs, flash_messages, forms, admin_tabs, text, play_chat
 │   │   ├── auth/            # login, change_password
-│   │   ├── admin/           # players, new_player, player_credentials, plays, play_editor
+│   │   ├── admin/           # index (overview), players, new_player, player_credentials, plays, play_editor
 │   │   ├── playbook/        # index, category, play
 │   │   └── errors/          # layout, 400, 403, 404, 500
 │   └── static/
@@ -348,7 +350,7 @@ Huddle/
 │       │   │   └── README.md    # the diagram format
 │       │   ├── play-viewer.js   # play page: steps, arrow keys, Play button
 │       │   ├── play-editor.js   # court editor: tools, steps, undo, save
-│       │   ├── assistant.js     # play page: "Thinking..." while an answer loads; Enter to send
+│       │   ├── play-chat.js     # play page: the chat with the assistant
 │       │   ├── password-toggle.js
 │       │   └── confirm-submit.js
 │       ├── icons/               # custom SVG icons (categories, drawing tools)
@@ -365,7 +367,7 @@ Huddle/
 │   ├── test_admin_plays.py  # creating, editing, publishing, deleting plays
 │   ├── test_playbook.py     # what players see; drafts stay hidden
 │   ├── test_play_validation.py  # checks on court editor data
-│   ├── test_assistant.py    # asking from a play page, daily limit, errors (the LLM is faked)
+│   ├── test_assistant.py    # the chat: asking, memory, daily limit, errors (the LLM is faked)
 │   ├── test_security.py     # CSRF and rate limiting
 │   └── test_cli.py          # flask create-admin
 ├── .claude/                 # Claude Code settings and the impeccable skill

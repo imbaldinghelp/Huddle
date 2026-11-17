@@ -1,4 +1,4 @@
-"""Asking the assistant about a play. The LLM is never really called: each test swaps in a fake."""
+"""The chat on the play page. The LLM is never really called: each test swaps in a fake."""
 
 from datetime import timedelta
 
@@ -45,7 +45,13 @@ class FakeLLM:
 
     @property
     def question(self):
-        return self.calls[-1][1][1]["content"]
+        """The newest question: always the last message sent."""
+        return self.calls[-1][1][-1]["content"]
+
+    @property
+    def messages(self):
+        """Everything sent in the last call, as (role, text) pairs."""
+        return [(message["role"], message["content"]) for message in self.calls[-1][1]]
 
 
 @pytest.fixture
@@ -57,8 +63,8 @@ def llm(monkeypatch):
 
 
 def ask(client, play, question="Who gets the first pass in Horns Flare?"):
-    """Post a question from a play's page and follow the redirect back to it."""
-    return client.post(f"/plays/{play.id}", data={"question": question}, follow_redirects=True)
+    """Send a question the way play-chat.js does: as JSON to the play's ask address."""
+    return client.post(f"/plays/{play.id}/ask", json={"question": question})
 
 
 def add_chat(user, play, question="Old question", answer="Old answer", created_at=None):
@@ -71,18 +77,24 @@ def add_chat(user, play, question="Old question", answer="Old answer", created_a
     return chat
 
 
-# ---------- The question box on the play page ----------
+def saved_chats():
+    return db.session.scalar(db.select(db.func.count(ChatLog.id)))
 
 
-def test_play_page_has_the_question_box(client, admin, player):
-    play = make_play(admin)
+# ---------- The chat on the play page ----------
+
+
+def test_play_page_has_the_chat(client, admin, player):
+    play = make_play(admin, title="Horns Flare")
     login(client, "wei")
 
     page = client.get(f"/plays/{play.id}").text
 
     assert "Ask about this play" in page
     assert "20 questions left today" in page
-    assert "<textarea" in page
+    assert f'data-ask-url="/plays/{play.id}/ask"' in page
+    # Before the first question there are ready-made ones to start with.
+    assert "Walk me through this play." in page
 
 
 def test_there_is_no_separate_assistant_page_or_tab(client, admin, player):
@@ -93,17 +105,56 @@ def test_there_is_no_separate_assistant_page_or_tab(client, admin, player):
     assert 'href="/assistant"' not in client.get("/playbook").text
 
 
-def test_a_draft_has_no_question_box(client, admin):
+def test_a_draft_has_no_chat(client, admin):
     draft = make_play(admin, status="draft")
     login(client, "coach")
 
     assert "Ask about this play" not in client.get(f"/plays/{draft.id}").text
 
 
+def test_play_page_shows_my_conversation_about_this_play_in_order(client, admin, player):
+    horns = make_play(admin, title="Horns Flare")
+    motion = make_play(admin, title="Motion Strong")
+    add_chat(admin, horns, question="Coach's private question")
+    add_chat(player, horns, question="My first question", created_at=utc_now() - timedelta(minutes=5))
+    add_chat(player, horns, question="My second question")
+    add_chat(player, motion, question="My question about motion")
+    login(client, "wei")
+
+    page = client.get(f"/plays/{horns.id}").text
+
+    # Oldest first, like any chat.
+    assert page.index("My first question") < page.index("My second question")
+    assert "My question about motion" not in page
+    assert "Coach's private question" not in page
+
+
+def test_yesterdays_conversation_is_not_shown(client, admin, player):
+    play = make_play(admin)
+    add_chat(player, play, question="Asked two days ago", created_at=utc_now() - timedelta(days=2))
+    login(client, "wei")
+
+    assert "Asked two days ago" not in client.get(f"/plays/{play.id}").text
+
+
+def test_saved_answer_is_shown_as_text_not_html(client, admin, player):
+    play = make_play(admin)
+    add_chat(player, play, answer="<script>alert('hi')</script>")
+    login(client, "wei")
+
+    page = client.get(f"/plays/{play.id}").text
+
+    assert "<script>alert" not in page
+    assert "&lt;script&gt;" in page
+
+
+# ---------- Who may ask ----------
+
+
 def test_asking_requires_login(client, admin, llm):
     play = make_play(admin)
 
-    response = client.post(f"/plays/{play.id}", data={"question": "What is Horns Flare?"})
+    response = ask(client, play)
 
     assert response.status_code == 302
     assert response.headers["Location"].startswith("/login")
@@ -115,7 +166,7 @@ def test_temporary_password_must_be_changed_before_asking(client, admin, llm):
     create_user("newbie", "New Player", Role.PLAYER, PASSWORD, must_change_password=True)
     login(client, "newbie")
 
-    response = client.post(f"/plays/{play.id}", data={"question": "What is Horns Flare?"})
+    response = ask(client, play)
 
     assert response.status_code == 302
     assert response.headers["Location"] == "/account/password"
@@ -126,102 +177,83 @@ def test_nobody_can_ask_about_a_draft(client, admin, llm):
     draft = make_play(admin, status="draft")
     login(client, "coach")
 
-    response = client.post(f"/plays/{draft.id}", data={"question": "What is this?"})
-
-    assert response.status_code == 404
+    assert ask(client, draft).status_code == 404
     assert llm.calls == []
 
 
-def test_player_asking_about_a_draft_gets_404(client, admin, player, llm):
-    draft = make_play(admin, status="draft")
+def test_asking_about_a_missing_play_gives_404(client, player, llm):
     login(client, "wei")
 
-    assert client.post(f"/plays/{draft.id}", data={"question": "What is this?"}).status_code == 404
+    assert client.post("/plays/999/ask", json={"question": "Hello?"}).status_code == 404
     assert llm.calls == []
+
+
+def test_ask_address_only_accepts_posts(client, admin, player):
+    play = make_play(admin)
+    login(client, "wei")
+
+    assert client.get(f"/plays/{play.id}/ask").status_code == 405
 
 
 # ---------- Asking ----------
 
 
-def test_asking_shows_the_answer_and_saves_it(client, admin, player, llm):
+def test_asking_returns_the_answer_and_saves_it(client, admin, player, llm):
     play = make_play(admin)
     login(client, "wei")
 
-    page = ask(client, play, "Who gets the first pass in Horns Flare?").text
+    response = ask(client, play, "Who gets the first pass in Horns Flare?")
 
-    assert "Who gets the first pass in Horns Flare?" in page
-    assert ANSWER in page
-    assert "19 questions left today" in page
+    assert response.status_code == 200
+    assert response.json["answer"] == ANSWER
+    assert response.json["questions_left"] == 19
     chat = db.session.scalars(db.select(ChatLog)).one()
     assert chat.user_id == player.id
     assert chat.play_id == play.id
     assert chat.question == "Who gets the first pass in Horns Flare?"
     assert chat.answer == ANSWER
+    # It is there after a refresh too.
+    assert ANSWER in client.get(f"/plays/{play.id}").text
 
 
-def test_asking_redirects_so_a_refresh_does_not_ask_again(client, admin, player, llm):
+@pytest.mark.parametrize(
+    "question, message",
+    [
+        ("   ", "Type a question first."),
+        (None, "Type a question first."),
+        (["not", "text"], "Type a question first."),
+        ("x" * 501, "Keep it under 500 characters."),
+    ],
+)
+def test_bad_question_is_refused_and_not_sent(client, admin, player, llm, question, message):
     play = make_play(admin)
     login(client, "wei")
 
-    response = client.post(f"/plays/{play.id}", data={"question": "What is Horns Flare?"})
+    response = ask(client, play, question)
 
-    assert response.status_code == 302
-    assert response.headers["Location"] == f"/plays/{play.id}#answers"
-
-
-def test_empty_question_is_not_sent(client, admin, player, llm):
-    play = make_play(admin)
-    login(client, "wei")
-
-    page = ask(client, play, "   ").text
-
-    assert "Type a question first." in page
+    assert response.status_code == 400
+    assert response.json["error"] == message
     assert llm.calls == []
-    assert db.session.scalar(db.select(db.func.count(ChatLog.id))) == 0
+    assert saved_chats() == 0
 
 
-def test_very_long_question_is_not_sent(client, admin, player, llm):
+def test_request_that_is_not_json_is_refused(client, admin, player, llm):
     play = make_play(admin)
     login(client, "wei")
 
-    page = ask(client, play, "x" * 501).text
+    response = client.post(f"/plays/{play.id}/ask", data="question=hello")
 
-    assert "Keep it under 500 characters." in page
+    assert response.status_code == 400
     assert llm.calls == []
 
 
-def test_answer_is_shown_as_text_not_html(client, admin, player, llm):
+def test_question_is_trimmed(client, admin, player, llm):
     play = make_play(admin)
-    llm.answer = "<script>alert('hi')</script>"
     login(client, "wei")
 
-    page = ask(client, play).text
+    ask(client, play, "  Who screens?  ")
 
-    assert "<script>alert" not in page
-    assert "&lt;script&gt;" in page
-
-
-def test_play_page_lists_only_my_questions_about_this_play(client, admin, player, llm):
-    horns = make_play(admin, title="Horns Flare")
-    motion = make_play(admin, title="Motion Strong")
-    add_chat(admin, horns, question="Coach's private question")
-    add_chat(player, horns, question="My question about horns")
-    add_chat(player, motion, question="My question about motion")
-    login(client, "wei")
-
-    page = client.get(f"/plays/{horns.id}").text
-
-    assert "My question about horns" in page
-    assert "My question about motion" not in page
-    assert "Coach's private question" not in page
-
-
-def test_yesterdays_questions_are_not_listed(client, admin, player):
-    play = make_play(admin)
-    add_chat(player, play, question="Asked two days ago", created_at=utc_now() - timedelta(days=2))
-    login(client, "wei")
-
-    assert "Asked two days ago" not in client.get(f"/plays/{play.id}").text
+    assert llm.question == "Who screens?"
 
 
 # ---------- What the model is given ----------
@@ -295,6 +327,48 @@ def test_asking_changes_nothing_but_the_chat_log(client, admin, player, llm):
     assert [(p.title, p.status, p.updated_at) for p in plays] == [("Horns Flare", "published", changed_at)]
 
 
+# ---------- Memory: follow-up questions ----------
+
+
+def test_follow_up_question_comes_with_the_conversation_so_far(client, admin, player, llm):
+    play = make_play(admin)
+    login(client, "wei")
+    ask(client, play, "Who sets the screen?")
+
+    ask(client, play, "And what does he do after that?")
+
+    assert llm.messages[1:] == [
+        ("user", "Who sets the screen?"),
+        ("assistant", ANSWER),
+        ("user", "And what does he do after that?"),
+    ]
+
+
+def test_memory_is_limited_to_the_last_few_questions(client, admin, player, llm):
+    play = make_play(admin)
+    for number in range(1, 7):
+        add_chat(player, play, question=f"Question {number}", created_at=utc_now() - timedelta(minutes=10 - number))
+    login(client, "wei")
+
+    ask(client, play, "The new one")
+
+    questions = [text for role, text in llm.messages if role == "user"]
+    assert questions == ["Question 3", "Question 4", "Question 5", "Question 6", "The new one"]
+
+
+def test_memory_does_not_mix_plays_users_or_days(client, admin, player, llm):
+    horns = make_play(admin, title="Horns Flare")
+    motion = make_play(admin, title="Motion Strong")
+    add_chat(player, motion, question="About another play")
+    add_chat(admin, horns, question="From another user")
+    add_chat(player, horns, question="From yesterday", created_at=utc_now() - timedelta(days=1, hours=1))
+    login(client, "wei")
+
+    ask(client, horns, "Just this one")
+
+    assert llm.messages[1:] == [("user", "Just this one")]
+
+
 # ---------- Daily limit ----------
 
 
@@ -315,18 +389,19 @@ def limited_client(monkeypatch):
     context.pop()
 
 
+LIMIT_MESSAGE = "You have used all 2 questions for today. You can ask again tomorrow."
+
+
 def test_questions_stop_at_the_daily_limit(limited_client):
     play = limited_client.play
-    assert "2 questions left today" in limited_client.get(f"/plays/{play.id}").text
-    assert "1 question left today" in ask(limited_client, play, "First?").text
+    assert ask(limited_client, play, "First?").json["questions_left"] == 1
 
-    page = ask(limited_client, play, "Second?").text
+    second = ask(limited_client, play, "Second?")
 
-    assert "You have used all 2 questions for today." in page
-    # The question box is gone once the limit is reached.
-    assert "<textarea" not in page
-    # Today's answers stay visible.
-    assert "Second?" in page
+    # The last allowed question is still answered, and the page is told it was the last.
+    assert second.json["answer"] == ANSWER
+    assert second.json["questions_left"] == 0
+    assert second.json["limit_message"] == LIMIT_MESSAGE
 
 
 def test_question_over_the_limit_is_refused_without_calling_the_model(limited_client):
@@ -334,12 +409,26 @@ def test_question_over_the_limit_is_refused_without_calling_the_model(limited_cl
     ask(limited_client, play, "First?")
     ask(limited_client, play, "Second?")
 
-    page = ask(limited_client, play, "Third?").text
+    third = ask(limited_client, play, "Third?")
 
-    assert "You have used all 2 questions for today." in page
-    assert "Third?" not in page
+    assert third.status_code == 400
+    assert third.json["error"] == LIMIT_MESSAGE
     assert len(limited_client.llm.calls) == 2
-    assert db.session.scalar(db.select(db.func.count(ChatLog.id))) == 2
+    assert saved_chats() == 2
+
+
+def test_play_page_swaps_the_question_box_for_a_note_at_the_limit(limited_client):
+    play = limited_client.play
+    ask(limited_client, play, "First?")
+    ask(limited_client, play, "Second?")
+
+    page = limited_client.get(f"/plays/{play.id}").text
+
+    assert "0 questions left today" in page
+    assert "<form class=\"chat-composer\" data-chat-form hidden>" in page
+    assert f"<p class=\"chat-limit\" data-chat-limit>{LIMIT_MESSAGE}</p>" in page
+    # The conversation so far stays visible.
+    assert "Second?" in page
 
 
 def test_limit_is_shared_across_plays(limited_client):
@@ -347,9 +436,7 @@ def test_limit_is_shared_across_plays(limited_client):
     ask(limited_client, limited_client.play, "First?")
     ask(limited_client, other, "Second?")
 
-    page = limited_client.get(f"/plays/{limited_client.play.id}").text
-
-    assert "You have used all 2 questions for today." in page
+    assert ask(limited_client, limited_client.play, "Third?").json["error"] == LIMIT_MESSAGE
 
 
 def test_limit_is_counted_per_user(limited_client):
@@ -360,7 +447,7 @@ def test_limit_is_counted_per_user(limited_client):
     login(limited_client, "coach")
 
     assert "2 questions left today" in limited_client.get(f"/plays/{play.id}").text
-    assert ANSWER in ask(limited_client, play, "Coach asks?").text
+    assert ask(limited_client, play, "Coach asks?").json["answer"] == ANSWER
 
 
 def test_limit_starts_again_each_day(limited_client):
@@ -369,7 +456,7 @@ def test_limit_starts_again_each_day(limited_client):
         add_chat(find_user("wei"), play, created_at=utc_now() - timedelta(days=1, hours=1))
 
     assert "2 questions left today" in limited_client.get(f"/plays/{play.id}").text
-    assert ANSWER in ask(limited_client, play, "A new day?").text
+    assert ask(limited_client, play, "A new day?").json["answer"] == ANSWER
 
 
 def test_the_day_follows_singapore_time():
@@ -383,20 +470,18 @@ def test_the_day_follows_singapore_time():
 # ---------- When the model fails ----------
 
 
-def test_provider_error_shows_a_friendly_message(client, admin, player, llm):
+def test_provider_error_gives_a_friendly_message(client, admin, player, llm):
     play = make_play(admin)
     llm.error = RuntimeError("401 invalid api key sk-secret-123 for provider groq")
     login(client, "wei")
 
-    response = ask(client, play, "Who screens in Horns Flare?")
+    response = ask(client, play)
 
-    assert response.status_code == 200
-    assert service.UNAVAILABLE_MESSAGE in response.text
-    # Nothing from the real error reaches the page.
+    assert response.status_code == 400
+    assert response.json["error"] == service.UNAVAILABLE_MESSAGE
+    # Nothing from the real error reaches the browser.
     assert "sk-secret-123" not in response.text
     assert "api key" not in response.text
-    # The question is still in the box, ready to send again.
-    assert "Who screens in Horns Flare?" in response.text
 
 
 def test_failed_question_is_not_saved_or_counted(client, admin, player, llm):
@@ -404,10 +489,10 @@ def test_failed_question_is_not_saved_or_counted(client, admin, player, llm):
     llm.error = TimeoutError("timed out")
     login(client, "wei")
 
-    page = ask(client, play).text
+    response = ask(client, play)
 
-    assert "20 questions left today" in page
-    assert db.session.scalar(db.select(db.func.count(ChatLog.id))) == 0
+    assert response.json["questions_left"] == 20
+    assert saved_chats() == 0
 
 
 def test_error_is_logged_for_the_admin_without_the_api_key(client, admin, player, llm, caplog, monkeypatch):
@@ -428,9 +513,7 @@ def test_fallback_model_answers_when_the_main_model_fails(client, admin, player,
     llm.broken_models = ["groq/llama-3.3-70b-versatile"]
     login(client, "wei")
 
-    page = ask(client, play).text
-
-    assert ANSWER in page
+    assert ask(client, play).json["answer"] == ANSWER
     assert llm.models == ["groq/llama-3.3-70b-versatile", "gemini/gemini-3.5-flash-lite"]
 
 
@@ -448,9 +531,7 @@ def test_every_model_is_tried_once_before_giving_up(client, admin, player, llm):
     llm.error = TimeoutError("timed out")
     login(client, "wei")
 
-    page = ask(client, play).text
-
-    assert service.UNAVAILABLE_MESSAGE in page
+    assert ask(client, play).json["error"] == service.UNAVAILABLE_MESSAGE
     assert llm.models == ["groq/llama-3.3-70b-versatile", "gemini/gemini-3.5-flash-lite"]
 
 
@@ -459,10 +540,18 @@ def test_empty_answer_counts_as_a_failure(client, admin, player, llm):
     llm.answer = ""
     login(client, "wei")
 
-    page = ask(client, play).text
+    assert ask(client, play).json["error"] == service.UNAVAILABLE_MESSAGE
+    assert saved_chats() == 0
 
-    assert service.UNAVAILABLE_MESSAGE in page
-    assert db.session.scalar(db.select(db.func.count(ChatLog.id))) == 0
+
+def test_empty_playbook_cannot_happen_but_is_handled(app, admin, player, llm):
+    # The route only accepts published plays, so the playbook always has one.
+    # ask() still guards against an empty one in case it is ever called directly.
+    draft = make_play(admin, status="draft")
+
+    with pytest.raises(service.AssistantError, match="no published plays"):
+        service.ask(player, "Anything?", draft)
+    assert llm.calls == []
 
 
 # ---------- The LiteLLM call itself ----------
@@ -525,11 +614,12 @@ def test_question_without_csrf_token_is_rejected(monkeypatch):
             session["_user_id"] = str(admin.id)
             session["_fresh"] = True
 
-        response = client.post(f"/plays/{play.id}", data={"question": "What is Horns Flare?"})
+        response = ask(client, play)
 
         assert response.status_code == 400
         assert fake.calls == []
-        assert 'name="csrf_token"' in client.get(f"/plays/{play.id}").text
+        # The page hands the token to play-chat.js, which sends it in a header.
+        assert "data-csrf-token=" in client.get(f"/plays/{play.id}").text
     finally:
         db.session.remove()
         context.pop()

@@ -41,13 +41,16 @@ def find_category(slug):
         return None
 
 
-def list_published_plays(category):
-    query = (
-        select(Play)
-        .where(Play.category == category, Play.status == PlayStatus.PUBLISHED)
-        .order_by(func.lower(Play.title))
-    )
-    return db.session.scalars(query).all()
+def list_plays_for(category, user):
+    """The plays in a category that this user may see, by title.
+
+    Players get published plays only. Admins also get the drafts, so a play
+    they have just started shows up where they expect it.
+    """
+    query = select(Play).where(Play.category == category)
+    if not user.is_admin:
+        query = query.where(Play.status == PlayStatus.PUBLISHED)
+    return db.session.scalars(query.order_by(func.lower(Play.title))).all()
 
 
 def list_all_published_plays():
@@ -80,6 +83,16 @@ def steps_data(play):
 
 
 # ---------- Writing (admin pages) ----------
+
+
+def count_plays():
+    """How many plays are published and how many are drafts, for the admin overview."""
+    query = select(Play.status, func.count(Play.id)).group_by(Play.status)
+    counts = dict(db.session.execute(query).all())
+    return {
+        "published": counts.get(PlayStatus.PUBLISHED, 0),
+        "drafts": counts.get(PlayStatus.DRAFT, 0),
+    }
 
 
 def list_all_plays():

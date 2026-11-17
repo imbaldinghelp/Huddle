@@ -1,4 +1,5 @@
 {% extends "shell.html" %}
+{% from "components/breadcrumbs.html" import breadcrumbs %}
 
 {% block title %}{{ category_label }} | Huddle{% endblock %}
 {% block page_class %} page-medium{% endblock %}
@@ -8,8 +9,14 @@
 {% endblock %}
 
 {% block content %}
-  <a class="back-link" href="{{ url_for('playbook.index') }}">Back to playbook</a>
-  <h1 class="page-title">{{ category_label }}</h1>
+  {{ breadcrumbs([("Playbook", url_for("playbook.index"))], category_label) }}
+  <div class="page-heading">
+    <h1 class="page-title">{{ category_label }}</h1>
+    {# Admins start a new play right here, with this category already chosen. #}
+    {% if current_user.is_admin %}
+      <a class="button" href="{{ url_for('admin.new_play', category=category.value) }}">New play</a>
+    {% endif %}
+  </div>
 
   {% if plays %}
     <ul class="play-list">
@@ -21,7 +28,12 @@
               {% if play.summary %}<span class="row-sub">{{ play.summary }}</span>{% endif %}
             </span>
             <span class="play-link-meta">
-              {% if play.is_recently_updated %}<span class="tag">Updated</span>{% endif %}
+              {# Only admins are ever given drafts to list. #}
+              {% if not play.is_published %}
+                <span class="tag tag-muted">Draft</span>
+              {% elif play.is_recently_updated %}
+                <span class="tag">Updated</span>
+              {% endif %}
               <span class="row-meta">{{ play.updated_at.strftime("%d %b %Y") }}</span>
             </span>
           </a>
@@ -29,6 +41,10 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p class="empty-note">No plays here yet. They will show up once your captain or coach publishes them.</p>
+    {% if current_user.is_admin %}
+      <p class="empty-note">No plays here yet. Choose New play to draw the first {{ category_label }} play in the court editor.</p>
+    {% else %}
+      <p class="empty-note">No plays here yet. They will show up once your captain or coach publishes them.</p>
+    {% endif %}
   {% endif %}
 {% endblock %}

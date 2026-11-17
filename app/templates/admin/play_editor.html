@@ -1,4 +1,5 @@
 {% extends "shell.html" %}
+{% from "components/breadcrumbs.html" import breadcrumbs %}
 
 {% block title %}{% if play %}Edit {{ play.title }}{% else %}New play{% endif %} | Huddle{% endblock %}
 
@@ -7,7 +8,10 @@
 {% endblock %}
 
 {% block content %}
-  <a class="back-link" href="{{ url_for('admin.plays') }}">Back to plays</a>
+  {{ breadcrumbs(
+    [("Admin", url_for("admin.index")), ("Plays", url_for("admin.plays"))],
+    play.title if play else "New play"
+  ) }}
   <div class="page-heading">
     <h1 class="page-title">{% if play %}Edit play{% else %}New play{% endif %}</h1>
     {% if play %}
@@ -32,7 +36,7 @@
           <div class="field-control">
             <select id="play-category">
               {% for category, label in categories.items() %}
-                <option value="{{ category.value }}"{% if play and play.category == category.value %} selected{% endif %}>{{ label }}</option>
+                <option value="{{ category.value }}"{% if category == selected_category %} selected{% endif %}>{{ label }}</option>
               {% endfor %}
             </select>
           </div>
