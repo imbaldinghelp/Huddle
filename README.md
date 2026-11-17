@@ -2,7 +2,7 @@
 
 Huddle is a private basketball playbook for SUTD Basketball, built with Flask.
 
-**Status:** Phase 2 (playbook) is done. Admins manage player accounts and build plays in the court editor, as drafts or published. Players log in, browse the four categories and step through each published play. The AI assistant arrives in Phase 3. The full plan is in [docs/BRIEF.md](docs/BRIEF.md).
+**Status:** Phase 3 (AI assistant) is done. Admins manage player accounts and build plays in the court editor, as drafts or published. Players log in, browse the four categories, step through each published play and ask the assistant questions about the playbook. Deployment arrives in Phase 4. The full plan is in [docs/BRIEF.md](docs/BRIEF.md).
 
 ## Set up from scratch
 
@@ -63,7 +63,7 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-The defaults work as they are. `.env` is private and gitignored: never commit it.
+The defaults work as they are, except the assistant: it needs a free API key in `.env` before it can answer (see [Assistant](#assistant)). Everything else runs without one. `.env` is private and gitignored: never commit it.
 
 **7. Create the database.**
 
@@ -95,7 +95,7 @@ Open <http://127.0.0.1:5000> in your browser and log in with the admin account. 
 python -m pytest
 ```
 
-You should see `156 passed`.
+You should see `193 passed`.
 
 ### Mac (Terminal)
 
@@ -148,7 +148,7 @@ python -m pip install -r requirements.txt
 cp .env.example .env
 ```
 
-The defaults work as they are. `.env` is private and gitignored: never commit it.
+The defaults work as they are, except the assistant: it needs a free API key in `.env` before it can answer (see [Assistant](#assistant)). Everything else runs without one. `.env` is private and gitignored: never commit it.
 
 **7. Create the database.**
 
@@ -182,7 +182,7 @@ Mac note: port 5000 is taken by AirPlay Receiver on recent macOS, which is why t
 python -m pytest
 ```
 
-You should see `156 passed`.
+You should see `193 passed`.
 
 ### If something goes wrong
 
@@ -194,6 +194,9 @@ You should see `156 passed`.
 | `Address already in use` | Another program uses that port. Add a different one, for example `flask run --port 5002`. |
 | `ModuleNotFoundError` | Packages are missing. Run `python -m pip install -r requirements.txt` with the environment active. |
 | Forgot your admin password | Run `flask create-admin` again with a new username, then reset the old admin's password from the Admin page. |
+| The assistant says it "could not answer just now" | Look at the terminal running Huddle for lines starting `Assistant:`. There is one for each model that failed, with the reason. `AuthenticationError`, `Missing ... API key` or `Illegal header value` means the key in `.env` is missing, empty or wrong (restart Huddle after editing `.env`). `RateLimitError` means the free limit is used up for now. `NotFoundError` means the model name is wrong or retired. |
+| The `Assistant:` line says `CERTIFICATE_VERIFY_FAILED` | Your network (often a work or school one) inspects secure connections with its own certificate, which Python does not know. Add `SSL_CERT_FILE=<path to that network's CA .pem file>` to `.env` and restart. Do not turn certificate checks off. |
+| `No such table: chat_logs` (or `plays`) | Run `flask db upgrade`. |
 
 ## Every day after that
 
@@ -241,6 +244,31 @@ Admins manage plays under **Admin > Plays**:
 
 The diagram format is documented in [app/static/js/court/README.md](app/static/js/court/README.md).
 
+## Assistant
+
+Every play page has an **Ask about this play** box under the diagram, so you can ask while looking at the play, for example "Who sets the screen?" or "What if the defender goes under?".
+
+- **What it knows:** the text of every published play (title, category, summary, coaching notes and step descriptions), and which play you are looking at, so "this play" and "it" work. Drafts are never sent, and a draft has no question box. It does not see the diagrams, so write what happens in each step's description.
+- **What it does not do:** it is told to answer only from the playbook and to say so when the answer is not there. It cannot change anything in Huddle. Each question is answered on its own; it does not remember the one before.
+- **Daily limit:** each person gets 20 questions a day in total, across all plays (`ASSISTANT_DAILY_LIMIT`). The count starts again at midnight Singapore time. Only answered questions count.
+- **What is saved:** each question and its answer, with the play it was about, in the `chat_logs` table. A play page shows a person their own questions about that play from today.
+
+**Set it up (once).** The assistant uses a free AI model through the [LiteLLM](https://docs.litellm.ai/) package.
+
+1. Create a free API key at <https://console.groq.com/keys>.
+2. Open `.env` and add the key (if your `.env` is older than this feature, copy the "AI assistant" lines from `.env.example` first):
+
+   ```
+   GROQ_API_KEY=your-key-here
+   ```
+
+3. Optional but recommended: add a second free key from <https://aistudio.google.com/apikey> as `GEMINI_API_KEY`. Huddle switches to Gemini when Groq fails or is over its free limit.
+4. Restart Huddle.
+
+The models are chosen in `.env` too: `LLM_MODEL` is tried first, then each model in `LLM_FALLBACK_MODELS` (comma-separated). Names are written `<provider>/<model>`. Left unset, Huddle uses `groq/llama-3.3-70b-versatile`, then `gemini/gemini-3.5-flash-lite`. Providers retire models from time to time: if the assistant stops answering, check the provider's models page and update the name.
+
+The whole playbook is sent with every question. Free plans cap how much text can be sent per minute, so if the playbook grows large and Groq starts refusing, put the Gemini model first in `LLM_MODEL`.
+
 ## Test
 
 With the environment active (same commands on Windows and Mac):
@@ -276,7 +304,8 @@ Huddle/
 │   ├── errors.py            # 400, 403, 404, 429, 500 handlers
 │   ├── models/
 │   │   ├── user.py          # users table
-│   │   └── play.py          # plays and play_steps tables
+│   │   ├── play.py          # plays and play_steps tables
+│   │   └── chat.py          # chat_logs table (assistant questions and answers)
 │   ├── auth/                # login, logout, change password
 │   │   ├── routes.py
 │   │   ├── forms.py
@@ -291,10 +320,13 @@ Huddle/
 │   │   ├── routes.py
 │   │   ├── service.py       # play rules (find, save, publish, delete)
 │   │   └── validation.py    # checks a play sent by the court editor
+│   ├── assistant/           # answers questions about a play (no pages of its own)
+│   │   ├── forms.py         # the question box
+│   │   └── service.py       # daily limit, prompt, and the only code that calls the LLM
 │   ├── templates/
 │   │   ├── base.html        # bare page skeleton
 │   │   ├── shell.html       # logged-in layout: header + content
-│   │   ├── components/      # site_header, flash_messages, forms, admin_tabs, text
+│   │   ├── components/      # site_header, flash_messages, forms, admin_tabs, text, play_assistant
 │   │   ├── auth/            # login, change_password
 │   │   ├── admin/           # players, new_player, player_credentials, plays, play_editor
 │   │   ├── playbook/        # index, category, play
@@ -316,6 +348,7 @@ Huddle/
 │       │   │   └── README.md    # the diagram format
 │       │   ├── play-viewer.js   # play page: steps, arrow keys, Play button
 │       │   ├── play-editor.js   # court editor: tools, steps, undo, save
+│       │   ├── assistant.js     # play page: "Thinking..." while an answer loads; Enter to send
 │       │   ├── password-toggle.js
 │       │   └── confirm-submit.js
 │       ├── icons/               # custom SVG icons (categories, drawing tools)
@@ -332,6 +365,7 @@ Huddle/
 │   ├── test_admin_plays.py  # creating, editing, publishing, deleting plays
 │   ├── test_playbook.py     # what players see; drafts stay hidden
 │   ├── test_play_validation.py  # checks on court editor data
+│   ├── test_assistant.py    # asking from a play page, daily limit, errors (the LLM is faked)
 │   ├── test_security.py     # CSRF and rate limiting
 │   └── test_cli.py          # flask create-admin
 ├── .claude/                 # Claude Code settings and the impeccable skill
@@ -347,4 +381,4 @@ Huddle/
 └── README.md
 ```
 
-Each blueprint folder also has an `__init__.py` that creates the blueprint. The `assistant/` folder is added in Phase 3, the phase that first needs it.
+Each blueprint folder also has an `__init__.py` that creates the blueprint.

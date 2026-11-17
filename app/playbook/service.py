@@ -5,6 +5,7 @@ editing) call these functions, so the rules about plays live in one place.
 """
 
 from sqlalchemy import func, select
+from sqlalchemy.orm import selectinload
 
 from app.constants import CATEGORY_LABELS, PlayCategory, PlayStatus
 from app.extensions import db
@@ -45,6 +46,21 @@ def list_published_plays(category):
         select(Play)
         .where(Play.category == category, Play.status == PlayStatus.PUBLISHED)
         .order_by(func.lower(Play.title))
+    )
+    return db.session.scalars(query).all()
+
+
+def list_all_published_plays():
+    """Every published play with its steps, grouped by category then title.
+
+    The assistant reads these. selectinload fetches all the steps in one
+    extra query instead of one query per play.
+    """
+    query = (
+        select(Play)
+        .where(Play.status == PlayStatus.PUBLISHED)
+        .options(selectinload(Play.steps))
+        .order_by(Play.category, func.lower(Play.title))
     )
     return db.session.scalars(query).all()
 

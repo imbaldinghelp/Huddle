@@ -112,6 +112,100 @@
   white-space: pre-line;
 }
 
+/* ---------- Ask the assistant ---------- */
+
+.assistant {
+  max-width: 720px;
+  margin-top: 48px;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+  /* Keeps the heading clear of the top edge when a link scrolls here. */
+  scroll-margin-top: 16px;
+}
+
+.assistant-title {
+  margin: 0 0 6px;
+  font-family: var(--display-font);
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 0.95;
+}
+
+.assistant-intro {
+  max-width: 60ch;
+  margin: 8px 0 22px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ask-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 18px;
+  margin-top: 14px;
+}
+
+.ask-actions .button {
+  min-width: 96px;
+}
+
+/* How many questions are left, or a note that the answer is on its way. */
+.ask-status {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Shown in place of the question box once today's questions are used up.
+   It reuses the quiet .empty-note box: reaching the limit is not an error. */
+.ask-limit {
+  margin: 0;
+}
+
+.answer-list {
+  margin: 26px 0 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--white);
+  list-style: none;
+}
+
+.answer {
+  padding: 18px;
+}
+
+.answer + .answer {
+  border-top: 1px solid var(--line);
+}
+
+.answer-question {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.answer-text {
+  max-width: 68ch;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  /* Keeps the line breaks the assistant wrote. */
+  white-space: pre-line;
+}
+
+@media (max-width: 720px) {
+  .answer {
+    padding: 16px;
+  }
+}
+
 @media (min-width: 860px) {
   .play-layout {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);

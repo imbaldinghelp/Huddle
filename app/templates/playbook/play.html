@@ -55,10 +55,15 @@
     </div>
   </div>
 
+  {% if play.is_published %}
+    {% include "components/play_assistant.html" %}
+  {% endif %}
+
   {# The steps, as data for play-viewer.js. #}
   <script type="application/json" id="play-data">{{ {"steps": steps} | tojson }}</script>
 {% endblock %}
 
 {% block scripts %}
   <script type="module" src="{{ url_for('static', filename='js/play-viewer.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/assistant.js') }}" defer></script>
 {% endblock %}

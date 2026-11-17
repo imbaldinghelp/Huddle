@@ -1,0 +1,41 @@
+{#
+  The "Ask about this play" box on the play page. Expects form, error and
+  assistant (today's answers and the count left) from the play route.
+#}
+{% from "components/forms.html" import text_field %}
+{% from "components/text.html" import count_of %}
+
+<section class="assistant" id="ask" aria-labelledby="assistant-title">
+  <h2 class="assistant-title" id="assistant-title">Ask about this play</h2>
+  <p class="assistant-intro">The assistant answers only from what the published plays say. If it is not written there, it will tell you.</p>
+
+  {% if assistant.questions_left > 0 %}
+    <form class="ask-form" action="{{ url_for('playbook.play', play_id=play.id, _anchor='ask') }}" method="POST" data-ask-form>
+      {{ form.hidden_tag() }}
+      {{ text_field(form.question, rows=3, maxlength=500, required=True) }}
+      {% if error %}
+        <p class="form-message" role="alert">{{ error }}</p>
+      {% endif %}
+      <div class="ask-actions">
+        <button class="button" type="submit" data-ask-button>Ask</button>
+        {# assistant.js swaps this text for a "working on it" note while waiting. #}
+        <p class="ask-status" role="status" data-ask-status>{{ count_of(assistant.questions_left, "question") }} left today</p>
+      </div>
+    </form>
+  {% else %}
+    <p class="empty-note ask-limit">{{ assistant.limit_message }}</p>
+  {% endif %}
+
+  <div id="answers">
+    {% if assistant.chats %}
+      <ul class="answer-list">
+        {% for chat in assistant.chats %}
+          <li class="answer">
+            <h3 class="answer-question">{{ chat.question }}</h3>
+            <p class="answer-text">{{ chat.answer }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</section>

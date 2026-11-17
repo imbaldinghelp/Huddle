@@ -25,10 +25,29 @@ def database_url():
     return url
 
 
+def model_list(text):
+    """Turn "model-a, model-b" from the environment into ["model-a", "model-b"]."""
+    return [name.strip() for name in text.split(",") if name.strip()]
+
+
 class BaseConfig:
     """Settings shared by every environment."""
 
     SQLALCHEMY_DATABASE_URI = database_url()
+
+    # ---------- AI assistant ----------
+    # Model names are written the LiteLLM way: "<provider>/<model>". Each
+    # provider's API key is read from its own environment variable
+    # (GROQ_API_KEY, GEMINI_API_KEY, ...); see .env.example.
+    LLM_MODEL = os.environ.get("LLM_MODEL") or "groq/llama-3.3-70b-versatile"
+    # Tried in order when the main model fails or is over its free limit.
+    LLM_FALLBACK_MODELS = model_list(
+        os.environ.get("LLM_FALLBACK_MODELS") or "gemini/gemini-3.5-flash-lite"
+    )
+    # Give up on a model that has not answered after this many seconds.
+    LLM_TIMEOUT_SECONDS = 20
+    # How many questions one user may ask per day.
+    ASSISTANT_DAILY_LIMIT = int(os.environ.get("ASSISTANT_DAILY_LIMIT") or 20)
 
     # The session cookie cannot be read by JavaScript, and is not sent when
     # another website makes a request to ours.
