@@ -60,6 +60,7 @@ Follow the tree in `docs/BRIEF.md` section 5. A folder is created in the phase t
 - After changing a model, create a migration and commit it with the change.
 - The court diagram JSON is documented in `app/static/js/court/README.md` and checked on the server in `app/playbook/validation.py`. Change the format in all three places together: README, validation (with its tests) and the JS.
 - All court drawing goes through `app/static/js/court/`; the viewer and editor never draw on their own.
+- The assistant has no page of its own: the question box sits on the play page (`/plays/<id>`), which handles the POST. `app/assistant/service.py` is the only file that talks to the LLM, through LiteLLM. Models and the daily limit come from env (`LLM_MODEL`, `LLM_FALLBACK_MODELS`, `ASSISTANT_DAILY_LIMIT`). Only published plays are sent. Tests replace `service.call_llm` with a fake and never call a real model.
 - CSS: one file per page in `static/css/pages/`; shared styles in `components.css`; colours and fonts only through tokens in `tokens.css`.
 - No inline styles and no inline scripts, except tiny bootstraps.
 - Link static files with `url_for('static', ...)` and routes with `url_for('<blueprint>.<view>')`.
@@ -80,7 +81,9 @@ Follow the tree in `docs/BRIEF.md` section 5. A folder is created in the phase t
 
 Do these only when asked, or fold them into a phase when Brian says so. Mention them when a related page is touched.
 
-- General UI enhancements and polish across the pages.
+- General UI/UX improvements and polish across the pages. The app should be easier to use and nicer to look at overall.
+- Admin is confusing: it is hard to see where to add a new play. Preferred fix (Brian): admins see a "New play" button on the category page, at the top right level with the category heading (e.g. Offense), so they create a play right where they browse, instead of Admin > Plays > New play. The category should be pre-selected in the editor. Also consider the same for "Add player", and make clearer what the Admin link in the header leads to.
 - Navigation between pages: make the "Back to ..." links more visible and obvious (today they are small text links), and add breadcrumbs.
 - Replace the Sideline and Baseline category icons with better ones (`app/static/icons/category-sideline.svg`, `category-baseline.svg`).
+- Assistant look and feel: "Ask about this play" reads like a Q&A board where you post a question (a form plus a list of past questions). Make it feel like a chat, like ChatGPT, Gemini or Claude: a message-style conversation with the question and the reply as turns, a input bar fixed at the bottom of the panel, the reply appearing in place of a "thinking" indicator, and ideally follow-up questions that remember the conversation (today each question is answered on its own). Keep it on the play page, and keep Huddle's own look (DESIGN.md) rather than copying theirs.
 - Keyboard-only drawing in the court editor (the court is mouse/touch only today).

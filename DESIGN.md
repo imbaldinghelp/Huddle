@@ -262,6 +262,10 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **Style:** the four playbook categories as square Board White cards, two per row at every width, with a 1px Rule Line border. A Marker Ink icon sits above the name (Barlow Condensed 30px, 22px on phones, Locker Green) and the play count (13px Muted Grey).
 - **State:** on hover the border turns Marker Ink and the card gets the Selected lift shadow.
 
+### Ask About This Play
+- **Style:** a section at the bottom of the play page, set off by a Rule Line, with a Barlow Condensed 25px heading. Its answers are a question-and-answer sheet, not chat bubbles: one Board White block with a 1px Rule Line border and 1px lines between entries, newest first, showing only today's questions about this play. The question is 14px weight 600 Marker Ink; the answer is 14px Ink Soft and keeps its line breaks. The question box sits above the list, with a compact button and a 13px Ink Soft count of the questions left. It is not shown on drafts.
+- **States:** while an answer loads the button is disabled and reads "Thinking...". A failed answer is an error form message above the button. When the day's questions are used up, the question box is replaced by the quiet empty note, not an error.
+
 ### Icons
 - **Style:** line icons drawn for Huddle, with square ends and filled arrowheads, like the court diagram. Files in `app/static/icons/`, shown through the `.icon` class, which paints them in the current text colour.
 

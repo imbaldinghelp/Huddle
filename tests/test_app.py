@@ -40,6 +40,7 @@ def test_home_sends_visitors_to_login(client):
         "/static/css/pages/play-editor.css",
         "/static/js/play-viewer.js",
         "/static/js/play-editor.js",
+        "/static/js/assistant.js",
         "/static/js/court/court.js",
         "/static/js/court/render.js",
         "/static/icons/category-offense.svg",

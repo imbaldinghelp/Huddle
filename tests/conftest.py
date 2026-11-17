@@ -20,6 +20,11 @@ TEST_SETTINGS = {
     # test_security.py turns both back on to check they work.
     "WTF_CSRF_ENABLED": False,
     "RATELIMIT_ENABLED": False,
+    # Fixed here so the assistant tests do not depend on what is in your .env.
+    # No test ever calls a real model: test_assistant.py swaps in a fake.
+    "LLM_MODEL": "groq/llama-3.3-70b-versatile",
+    "LLM_FALLBACK_MODELS": ["gemini/gemini-3.5-flash-lite"],
+    "ASSISTANT_DAILY_LIMIT": 20,
 }
 
 
