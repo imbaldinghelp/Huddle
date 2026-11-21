@@ -15,7 +15,7 @@ ADMIN_PAGES = [
     ("POST", "/admin/players/1/reset-password"),
     ("POST", "/admin/players/1/deactivate"),
     ("POST", "/admin/players/1/reactivate"),
-    ("GET", "/admin/plays"),
+    ("GET", "/playbook/offense/edit"),
     ("GET", "/admin/plays/new"),
     ("POST", "/admin/plays"),
     ("GET", "/admin/plays/1/edit"),
@@ -145,30 +145,23 @@ def test_actions_on_a_missing_user_give_404(client, admin):
     assert client.post("/admin/players/999/deactivate").status_code == 404
 
 
-# ---------- Overview ----------
+# ---------- Admin is the players page ----------
 
 
-def test_admin_overview_shows_counts_and_the_main_actions(client, admin, player):
-    create_user("gone", "Gone Guy", Role.PLAYER, PASSWORD, must_change_password=False).is_active = False
-    db.session.commit()
-    make_play(admin, title="Horns Flare")
-    make_play(admin, title="Motion Strong")
-    make_play(admin, title="Secret Draft", status="draft")
+def test_admin_home_goes_to_the_players_page(client, admin):
     login(client, "coach")
 
-    page = client.get("/admin/").text
+    response = client.get("/admin/")
 
-    assert "2 published, 1 draft" in page
-    assert "2 active, 1 deactivated" in page
-    assert 'href="/admin/plays/new"' in page
+    assert response.status_code == 302
+    assert response.headers["Location"] == "/admin/players"
+
+
+def test_players_page_has_no_play_management(client, admin):
+    login(client, "coach")
+
+    page = client.get("/admin/players").text
+
     assert 'href="/admin/players/new"' in page
-
-
-def test_admin_overview_with_nothing_yet(client, admin):
-    login(client, "coach")
-
-    page = client.get("/admin/").text
-
-    assert "0 published, 0 drafts" in page
-    assert "1 active" in page
-    assert "deactivated" not in page.split("Create accounts")[1].split("</li>")[0]
+    # Plays are managed from the playbook now, not from Admin.
+    assert "/admin/plays" not in page

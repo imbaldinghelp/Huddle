@@ -97,7 +97,7 @@ Huddle/
 
 **users**: id, username (unique, lowercase), password_hash, display_name, role (`admin`/`player`), is_active, must_change_password, created_at, last_login_at
 
-**plays**: id, title, category, summary, coaching_notes, status (`draft`/`published`), created_by (FK users.id), created_at, updated_at
+**plays**: id, title, category, summary, status (`draft`/`published`), created_by (FK users.id), created_at, updated_at
 
 **play_steps**: id, play_id (FK plays.id, cascade delete), step_number, description, diagram (JSON, schema in section 7)
 
@@ -171,11 +171,11 @@ One shared JS module renders the court and diagram; the editor and viewer both u
 
 **Pages and flow:**
 1. **Login** (`/login`): keep the current two-panel design with the team photo. Replace the Player/Coach toggle and team password with **username + password** (role comes from the account). Show errors with the existing `form-message` style.
-2. **Change password** (`/account/password`): forced on first login.
+2. **Change password** (`/account/password`): forced on first login. (Added 2026-11-21: clicking your name opens **Your account** (`/account`): name, username, role, questions left today, and a Change password button.)
 3. **Main page** (`/playbook`): Huddle logo/wordmark in the header. The 4 categories as **large square cards, 2 per row** (2×2 grid, also 2×2 on phones). Each card: a custom SVG icon centered at the top (offense: attacking arrow or ball; defense: shield; sideline: arrow entering from the side line; baseline: arrow entering from the baseline), then the category name centered below. Show the number of published plays under the name. I suggested light blue for the label text; pick a color that fits the existing palette and passes AA contrast on the background (a darker blue is fine, light blue on the light background is not).
 4. **Category page** (`/playbook/<category>`): list of published plays (title, short summary, last updated). Mark plays updated in the last 7 days as "Updated".
-5. **Play page** (`/plays/<id>`): court viewer, step description, coaching notes.
-6. **Admin area** (`/admin/...`): only visible to admins (link hidden for players, routes return 403). Pages: players list (create, reset password, deactivate/reactivate), plays list (create, edit in court editor, publish/unpublish, delete with confirmation).
+5. **Play page** (`/plays/<id>`): court viewer, step description. (Coaching notes were dropped on 2026-11-21: each step's description covers them.)
+6. **Admin area** (`/admin/...`): only visible to admins (link hidden for players, routes return 403). Pages: players list (create, reset password, deactivate/reactivate) and the court editor. (Changed 2026-11-21: plays are managed from each category page instead of an admin plays list: **Edit** beside **New play** shows edit, publish/unpublish and delete with confirmation for every play in that category.)
 7. **Header** on all logged-in pages: wordmark, current user's name, Admin link (admins only), Logout.
 8. Error pages for 403, 404, 500 in the same style.
 
@@ -193,7 +193,7 @@ Must be free and reachable at any time:
 - Page `/assistant`: chat box for logged-in users.
 - `app/assistant/service.py` is the only file that talks to the LLM, via LiteLLM.
 - Provider and model come from env (`LLM_MODEL`, plus a fallback model list). Default to Groq's free tier, with Gemini or OpenRouter free models as fallback. Check the providers' current docs for valid model names; do not guess them.
-- Context: send the text of all **published** plays (title, category, summary, coaching notes, step descriptions). No RAG/embeddings for now.
+- Context: send the text of all **published** plays (title, category, summary, step descriptions, and each step's diagram described in words; added 2026-11-21). No RAG/embeddings for now.
 - System prompt: answer only from the playbook; if the answer is not in the playbook, say so; never invent plays.
 - The assistant is read-only: it can never change data.
 - Per-user daily question limit (env, default 20), enforced using `chat_logs`.
@@ -215,7 +215,7 @@ Must be free and reachable at any time:
 - Tests: login success/fail, deactivated user blocked, player gets 403 on admin routes, forced password change.
 
 **Phase 2: Playbook**
-- Main page, category pages, play page with viewer, admin plays list, court editor, draft/publish.
+- Main page, category pages, play page with viewer, category Edit page, court editor, draft/publish.
 - Tests: players never see drafts, editor JSON validation, play CRUD permissions.
 
 **Phase 3: AI assistant** (section 10)

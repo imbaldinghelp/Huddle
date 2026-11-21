@@ -1,7 +1,7 @@
 {% extends "shell.html" %}
 {% from "components/breadcrumbs.html" import breadcrumbs %}
 
-{% block title %}{{ category_label }} | Huddle{% endblock %}
+{% block title %}{% if editing %}Edit {% endif %}{{ category_label }} | Huddle{% endblock %}
 {% block page_class %} page-medium{% endblock %}
 
 {% block page_css %}
@@ -9,16 +9,75 @@
 {% endblock %}
 
 {% block content %}
-  {{ breadcrumbs([("Playbook", url_for("playbook.index"))], category_label) }}
+  {% if editing %}
+    {{ breadcrumbs(
+      [("Playbook", url_for("playbook.index")), (category_label, url_for("playbook.category", slug=category.value))],
+      "Edit"
+    ) }}
+  {% else %}
+    {{ breadcrumbs([("Playbook", url_for("playbook.index"))], category_label) }}
+  {% endif %}
+
   <div class="page-heading">
     <h1 class="page-title">{{ category_label }}</h1>
-    {# Admins start a new play right here, with this category already chosen. #}
+    {# Admins manage plays right here: Edit lists every play with its actions,
+       New play opens the editor with this category already chosen. #}
     {% if current_user.is_admin %}
-      <a class="button" href="{{ url_for('admin.new_play', category=category.value) }}">New play</a>
+      <div class="page-heading-actions">
+        {% if editing %}
+          <a class="button button-quiet" href="{{ url_for('playbook.category', slug=category.value) }}">Done</a>
+        {% elif plays %}
+          <a class="button button-quiet" href="{{ url_for('playbook.edit_category', slug=category.value) }}">Edit</a>
+        {% endif %}
+        <a class="button" href="{{ url_for('admin.new_play', category=category.value) }}">New play</a>
+      </div>
     {% endif %}
   </div>
 
-  {% if plays %}
+  {% if editing and plays %}
+    <p class="page-intro">Open a play in the editor, publish or unpublish it, or delete it. Players only see published plays.</p>
+    <ul class="row-list">
+      {% for play in plays %}
+        <li class="row">
+          <div class="row-main">
+            <span class="row-title">{{ play.title }}</span>
+            {% if play.summary %}<span class="row-sub">{{ play.summary }}</span>{% endif %}
+          </div>
+
+          <div class="row-status">
+            {% if play.is_published %}
+              <span class="tag">Published</span>
+            {% else %}
+              <span class="tag tag-muted">Draft</span>
+            {% endif %}
+            <span class="row-meta">Changed {{ play.updated_at.strftime("%d %b %Y") }}</span>
+          </div>
+
+          <div class="row-actions">
+            <a class="button button-quiet" href="{{ url_for('admin.edit_play', play_id=play.id) }}"
+               aria-label="Edit {{ play.title }}">Edit</a>
+            {% if play.is_published %}
+              <form action="{{ url_for('admin.unpublish_play', play_id=play.id) }}" method="POST"
+                    data-confirm="Unpublish {{ play.title }}? Players will no longer see it.">
+                {{ action_form.hidden_tag() }}
+                <button class="button button-quiet" type="submit" aria-label="Unpublish {{ play.title }}">Unpublish</button>
+              </form>
+            {% else %}
+              <form action="{{ url_for('admin.publish_play', play_id=play.id) }}" method="POST">
+                {{ action_form.hidden_tag() }}
+                <button class="button button-quiet" type="submit" aria-label="Publish {{ play.title }}">Publish</button>
+              </form>
+            {% endif %}
+            <form action="{{ url_for('admin.delete_play', play_id=play.id) }}" method="POST"
+                  data-confirm="Delete {{ play.title }} for good? This cannot be undone.">
+              {{ action_form.hidden_tag() }}
+              <button class="button button-quiet" type="submit" aria-label="Delete {{ play.title }}">Delete</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% elif plays %}
     <ul class="play-list">
       {% for play in plays %}
         <li>
@@ -46,5 +105,11 @@
     {% else %}
       <p class="empty-note">No plays here yet. They will show up once your captain or coach publishes them.</p>
     {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  {% if editing %}
+    <script src="{{ url_for('static', filename='js/confirm-submit.js') }}" defer></script>
   {% endif %}
 {% endblock %}

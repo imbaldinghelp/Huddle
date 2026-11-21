@@ -263,7 +263,7 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 - **State:** on hover the border turns Marker Ink and the card gets the Selected lift shadow.
 
 ### Chat (Ask About This Play)
-- **Where:** on the play page, in the right column under the coaching notes (under the court on phones). On wide, tall screens the court stays in view while this column scrolls. Not shown on drafts.
+- **Where:** on the play page, in the right column under the step description and legend (under the court on phones). On wide, tall screens the court stays in view while this column scrolls. Not shown on drafts.
 - **Style:** a Barlow Condensed 25px heading with a 12px Muted Grey count of the questions left, over a Board White panel with a 1px Rule Line border. Messages are turns, like a chat app, in Huddle's own shapes: your message sits on the right in a square Track Grey block; the reply is plain 14px Ink Soft text on the left. The conversation scrolls inside the panel (420px at most) and the question box stays at the bottom: a normal field with a 42px Send button inside it.
 - **States:** before the first message, a short note and three ready-made questions as square outlined buttons. While a reply loads, three 6px Muted Grey dots pulse (still under reduced motion) and Send is disabled. A failed reply puts the question back in the box and shows an error form message above it. When the day's questions are used up, a quiet note replaces the question box.
 
@@ -280,9 +280,6 @@ Square. Every button, field, option, message and the brand mark has a 0 radius. 
 
 ### Toolbar
 - **Style:** the editor's drawing tools sit on a Track Grey track like segmented options: 42px tall, icon plus a 12px weight 600 label. The chosen tool turns Board White with the Selected lift shadow. The steps list uses the same track and lift for the current step.
-
-### Section Tabs
-- **Style:** text links (13px weight 600, Ink Soft) on a Rule Line, used to move between Overview, Plays and Players in the admin area. The current tab is Marker Ink with a 2px Marker Ink line under it; the header keeps the only orange line.
 
 ### Kicker Label
 - **Style:** 10px bold capitals in Locker Green above the login heading. Login page only: on every other page the heading stands alone.

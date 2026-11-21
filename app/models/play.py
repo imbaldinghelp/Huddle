@@ -21,7 +21,6 @@ class Play(db.Model):
     # One of the PlayCategory values, for example "offense".
     category: Mapped[str] = mapped_column(String(20), index=True)
     summary: Mapped[str] = mapped_column(String(200), default="")
-    coaching_notes: Mapped[str] = mapped_column(Text, default="")
     status: Mapped[str] = mapped_column(String(20), default=PlayStatus.DRAFT)
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utc_now)

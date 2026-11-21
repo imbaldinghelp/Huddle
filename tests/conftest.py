@@ -94,7 +94,6 @@ def play_data(**changes):
         "title": "Horns Flare",
         "category": "offense",
         "summary": "Flare screen for the shooter.",
-        "coaching_notes": "Set the screen and stay still.",
         "status": "published",
         "steps": [{"description": "1 passes to 2 on the wing.", "diagram": diagram_data()}],
     }

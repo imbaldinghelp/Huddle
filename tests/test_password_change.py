@@ -74,5 +74,6 @@ def test_changing_password_by_choice_needs_the_current_one(client, player):
     assert player.check_password(PASSWORD)
 
     response = client.post("/account/password", data={**data, "current_password": PASSWORD})
-    assert response.headers["Location"] == "/playbook"
+    # Back to the account page the change was started from.
+    assert response.headers["Location"] == "/account"
     assert player.check_password(NEW_PASSWORD)

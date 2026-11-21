@@ -1,0 +1,32 @@
+/* Account page: who you are, and the way to change your password. */
+
+.account-details {
+  margin: 24px 0 0;
+  border: 1px solid var(--line);
+  background: var(--white);
+}
+
+.account-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 14px 18px;
+}
+
+.account-row + .account-row {
+  border-top: 1px solid var(--line);
+}
+
+.account-details dt {
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.account-details dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}

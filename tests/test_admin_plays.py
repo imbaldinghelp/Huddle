@@ -13,15 +13,51 @@ def all_plays():
     return db.session.query(Play).all()
 
 
-def test_admin_sees_every_play_drafts_included(client, admin):
-    make_play(admin, title="Horns Flare")
-    make_play(admin, title="Secret Draft", status="draft")
+# ---------- A category's Edit page ----------
+
+
+def test_edit_page_lists_the_category_with_actions(client, admin):
+    published = make_play(admin, title="Horns Flare")
+    draft = make_play(admin, title="Secret Draft", status="draft")
+    make_play(admin, title="Zone Press", category="defense")
     login(client, "coach")
 
-    page = client.get("/admin/plays").text
+    page = client.get("/playbook/offense/edit").text
 
     assert "Horns Flare" in page
     assert "Secret Draft" in page
+    assert "Zone Press" not in page
+    assert f'href="/admin/plays/{published.id}/edit"' in page
+    assert f'action="/admin/plays/{published.id}/unpublish"' in page
+    assert f'action="/admin/plays/{draft.id}/publish"' in page
+    assert f'action="/admin/plays/{draft.id}/delete"' in page
+    # Done goes back to the normal list.
+    assert 'href="/playbook/offense"' in page
+
+
+def test_category_page_has_an_edit_button_for_admins(client, admin):
+    make_play(admin)
+    login(client, "coach")
+
+    page = client.get("/playbook/offense").text
+
+    assert 'href="/playbook/offense/edit"' in page
+    assert 'href="/admin/plays/new?category=offense"' in page
+
+
+def test_no_edit_button_on_an_empty_category(client, admin):
+    login(client, "coach")
+
+    assert "/playbook/defense/edit" not in client.get("/playbook/defense").text
+
+
+def test_edit_page_for_an_unknown_category_is_404(client, admin):
+    login(client, "coach")
+
+    assert client.get("/playbook/trick-shots/edit").status_code == 404
+
+
+# ---------- The court editor ----------
 
 
 def test_editor_page_loads_for_a_new_play(client, admin):
@@ -30,6 +66,9 @@ def test_editor_page_loads_for_a_new_play(client, admin):
     page = client.get("/admin/plays/new").text
 
     assert "New play" in page
+    # The editor sits inside the playbook: Playbook / New play.
+    assert 'href="/playbook"' in page
+    assert 'href="/admin/plays"' not in page
     assert 'data-save-url="/admin/plays"' in page
 
 
@@ -42,6 +81,8 @@ def test_editor_page_loads_a_saved_play(client, admin):
     assert 'value="Horns Flare"' in page
     assert "1 passes to 2 on the wing." in page
     assert f'data-save-url="/admin/plays/{play.id}"' in page
+    # Breadcrumbs: Playbook / Offense / Horns Flare.
+    assert 'href="/playbook/offense"' in page
 
 
 def test_admin_creates_a_draft(client, admin):
@@ -62,9 +103,10 @@ def test_admin_creates_a_draft(client, admin):
 def test_admin_publishes_from_the_editor(client, admin):
     login(client, "coach")
 
-    response = client.post("/admin/plays", json=play_data(status="published"))
+    response = client.post("/admin/plays", json=play_data(category="sideline", status="published"))
 
-    assert response.json == {"redirect": "/admin/plays"}
+    # Publishing lands on the play's category page, where players will find it.
+    assert response.json == {"redirect": "/playbook/sideline"}
     assert all_plays()[0].is_published
 
 
@@ -106,12 +148,14 @@ def test_a_request_that_is_not_json_is_rejected(client, admin):
     assert all_plays() == []
 
 
-def test_publish_and_unpublish_from_the_list(client, admin):
-    play = make_play(admin, status="draft")
+def test_publish_and_unpublish_from_the_edit_page(client, admin):
+    play = make_play(admin, category="defense", status="draft")
     login(client, "coach")
 
-    client.post(f"/admin/plays/{play.id}/publish")
+    response = client.post(f"/admin/plays/{play.id}/publish")
     assert play.status == PlayStatus.PUBLISHED
+    # Back to the Edit page of the play's category.
+    assert response.headers["Location"] == "/playbook/defense/edit"
 
     response = client.post(f"/admin/plays/{play.id}/unpublish", follow_redirects=True)
     assert play.status == PlayStatus.DRAFT
@@ -124,6 +168,7 @@ def test_delete_removes_the_play_and_its_steps(client, admin):
 
     response = client.post(f"/admin/plays/{play.id}/delete", follow_redirects=True)
 
+    assert response.request.path == "/playbook/offense/edit"
     assert "Horns Flare has been deleted." in response.text
     assert all_plays() == []
     assert db.session.query(PlayStep).count() == 0

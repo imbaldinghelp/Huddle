@@ -8,10 +8,12 @@
 {% endblock %}
 
 {% block content %}
-  {{ breadcrumbs(
-    [("Admin", url_for("admin.index")), ("Plays", url_for("admin.plays"))],
-    play.title if play else "New play"
-  ) }}
+  {# Playbook / Offense / the play: the editor sits inside the playbook. #}
+  {% set trail = [("Playbook", url_for("playbook.index"))] %}
+  {% if selected_category %}
+    {% set trail = trail + [(categories[selected_category], url_for("playbook.category", slug=selected_category))] %}
+  {% endif %}
+  {{ breadcrumbs(trail, play.title if play else "New play") }}
   <div class="page-heading">
     <h1 class="page-title">{% if play %}Edit play{% else %}New play{% endif %}</h1>
     {% if play %}
@@ -45,10 +47,11 @@
         <div class="field details-wide">
           <label class="field-label" for="play-summary">Summary</label>
           <div class="field-control">
-            <input id="play-summary" type="text" maxlength="200" autocomplete="off"
-                   aria-describedby="play-summary-hint" value="{{ play.summary if play else '' }}">
+            {# Starts one line tall and grows with the text (play-editor.js). #}
+            <textarea id="play-summary" class="summary-input" maxlength="200" rows="1"
+                      aria-describedby="play-summary-hint">{{ play.summary if play else '' }}</textarea>
           </div>
-          <p class="field-hint" id="play-summary-hint">One line shown in the list of plays, for example when to run it.</p>
+          <p class="field-hint" id="play-summary-hint">A few lines shown in the list of plays, for example when to run it.</p>
         </div>
 
       </div>
@@ -90,18 +93,6 @@
             <p class="field-hint" id="step-description-hint">What happens in this step. A new step starts where this one ends.</p>
           </div>
         </div>
-      </div>
-    </section>
-
-    <section class="editor-section" aria-labelledby="notes-title">
-      <h2 class="section-title" id="notes-title">Notes</h2>
-      <div class="field">
-        <label class="field-label" for="play-notes">Coaching notes</label>
-        <div class="field-control">
-          <textarea id="play-notes" maxlength="4000" rows="5"
-                    aria-describedby="play-notes-hint">{{ play.coaching_notes if play else '' }}</textarea>
-        </div>
-        <p class="field-hint" id="play-notes-hint">Shown under the diagram: reads, options and common mistakes.</p>
       </div>
     </section>
 

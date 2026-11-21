@@ -9,7 +9,6 @@ from app.constants import PlayCategory, PlayStatus
 
 MAX_TITLE = 80
 MAX_SUMMARY = 200
-MAX_NOTES = 4000
 MAX_DESCRIPTION = 500
 MAX_STEPS = 20
 MAX_PATH_POINTS = 12
@@ -40,7 +39,6 @@ def validate_play(data):
         "title": clean_text(data.get("title"), "Title", MAX_TITLE, errors, required=True),
         "category": clean_choice(data.get("category"), PlayCategory, "Choose a category.", errors),
         "summary": clean_text(data.get("summary"), "Summary", MAX_SUMMARY, errors),
-        "coaching_notes": clean_text(data.get("coaching_notes"), "Coaching notes", MAX_NOTES, errors),
         "status": clean_choice(data.get("status"), PlayStatus, "Choose draft or published.", errors),
         "steps": clean_steps(data.get("steps"), errors),
     }

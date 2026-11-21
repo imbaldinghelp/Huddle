@@ -1,4 +1,4 @@
-/* Play page: the court viewer, step text, coaching notes and the chat.
+/* Play page: the court viewer, step text and the chat.
    The court itself is styled in ../components.css ("Court diagram"). */
 
 .play-status {
@@ -11,10 +11,17 @@
   font-size: 13px;
 }
 
-/* One column on phones; court beside the text on wide screens. */
+.play-summary {
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+/* One column on phones; court beside the text on wide screens. The top
+   margin separates the title and summary from the court and steps. */
 .play-layout {
   display: grid;
   gap: 26px;
+  margin-top: 20px;
 }
 
 .play-stage {
@@ -54,8 +61,7 @@
 
 /* ---------- Step text ---------- */
 
-.step-count,
-.notes-title {
+.step-count {
   margin: 0 0 8px;
   color: var(--green);
   font-size: 12px;
@@ -95,21 +101,6 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-}
-
-/* ---------- Coaching notes ---------- */
-
-.coaching-notes {
-  margin-top: 30px;
-}
-
-.coaching-notes p {
-  max-width: 60ch;
-  margin: 0;
-  color: var(--ink-soft);
-  font-size: 14px;
-  line-height: 1.6;
-  white-space: pre-line;
 }
 
 /* ---------- Chat: ask the assistant about this play ---------- */
@@ -314,8 +305,8 @@
   }
 }
 
-/* On a wide and tall enough screen the court stays in view while the notes
-   and the chat scroll past, so you can ask while looking at the play. */
+/* On a wide and tall enough screen the court stays in view while the step
+   text and the chat scroll past, so you can ask while looking at the play. */
 @media (min-width: 860px) and (min-height: 720px) {
   .play-stage {
     position: sticky;

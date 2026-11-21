@@ -9,13 +9,14 @@
     <nav class="site-nav" aria-label="Account">
       {# While a temporary password is still in use, every other page redirects here anyway. #}
       {% if not current_user.must_change_password %}
+        {# Admin is for managing players; plays are managed in the playbook. #}
         {% if current_user.is_admin %}
-          <a class="site-nav-link" href="{{ url_for('admin.index') }}"
+          <a class="site-nav-link" href="{{ url_for('admin.players') }}"
              {% if request.blueprint == 'admin' %}aria-current="page"{% endif %}>Admin</a>
         {% endif %}
-        <a class="site-nav-link site-nav-user" href="{{ url_for('auth.change_password') }}"
-           title="Change your password"
-           aria-label="{{ current_user.display_name }}, change password">{{ current_user.display_name }}</a>
+        <a class="site-nav-link site-nav-user" href="{{ url_for('auth.account') }}"
+           {% if request.endpoint in ('auth.account', 'auth.change_password') %}aria-current="page"{% endif %}
+           aria-label="{{ current_user.display_name }}, your account">{{ current_user.display_name }}</a>
       {% else %}
         <span class="site-nav-user">{{ current_user.display_name }}</span>
       {% endif %}

@@ -12,7 +12,7 @@ from app.extensions import db
 from app.models.chat import ChatLog
 from app.models.play import Play
 from app.models.user import utc_now
-from tests.conftest import PASSWORD, build_app, login, make_play
+from tests.conftest import PASSWORD, build_app, diagram_data, login, make_play
 
 ANSWER = "In Horns Flare, 1 passes to 2 on the wing."
 
@@ -62,9 +62,9 @@ def llm(monkeypatch):
     return fake
 
 
-def ask(client, play, question="Who gets the first pass in Horns Flare?"):
+def ask(client, play, question="Who gets the first pass in Horns Flare?", step=None):
     """Send a question the way play-chat.js does: as JSON to the play's ask address."""
-    return client.post(f"/plays/{play.id}/ask", json={"question": question})
+    return client.post(f"/plays/{play.id}/ask", json={"question": question, "step": step})
 
 
 def add_chat(user, play, question="Old question", answer="Old answer", created_at=None):
@@ -265,7 +265,6 @@ def test_model_gets_the_published_plays_and_the_question(client, admin, player, 
         title="Horns Flare",
         category="offense",
         summary="Flare screen for the shooter.",
-        coaching_notes="Set the screen and stay still.",
     )
     login(client, "wei")
 
@@ -276,8 +275,10 @@ def test_model_gets_the_published_plays_and_the_question(client, admin, player, 
         "Horns Flare",
         "Offense",
         "Flare screen for the shooter.",
-        "Set the screen and stay still.",
-        "1. 1 passes to 2 on the wing.",
+        "Step 1. Written: 1 passes to 2 on the wing.",
+        # The diagram, in words, so the model knows what the drawing shows.
+        "1 at the top of the key (has the ball)",
+        "What happens: 1 passes to 2. 3 cuts to the left block.",
     ]:
         assert text in llm.system_prompt
 
@@ -292,6 +293,28 @@ def test_model_is_told_which_play_is_on_screen(client, admin, player, llm):
     assert 'The player is looking at the play "Motion Strong".' in llm.system_prompt
     # The rest of the playbook is still there for questions that compare plays.
     assert "Play: Horns Flare" in llm.system_prompt
+
+
+def test_model_is_told_which_step_is_on_screen(client, admin, player, llm):
+    two_steps = [{"description": "First.", "diagram": diagram_data()}, {"description": "Second.", "diagram": diagram_data()}]
+    play = make_play(admin, title="Horns Flare", steps=two_steps)
+    login(client, "wei")
+
+    ask(client, play, "Who has the ball now?", step=2)
+
+    assert 'looking at the play "Horns Flare", step 2 of 2.' in llm.system_prompt
+
+
+@pytest.mark.parametrize("step", [0, 3, "2", True, None])
+def test_a_step_that_is_not_real_is_ignored(client, admin, player, llm, step):
+    two_steps = [{"description": "First.", "diagram": diagram_data()}, {"description": "Second.", "diagram": diagram_data()}]
+    play = make_play(admin, title="Horns Flare", steps=two_steps)
+    login(client, "wei")
+
+    response = ask(client, play, step=step)
+
+    assert response.status_code == 200
+    assert 'looking at the play "Horns Flare".' in llm.system_prompt
 
 
 def test_model_never_gets_a_draft(client, admin, player, llm):
@@ -311,9 +334,9 @@ def test_model_is_told_to_answer_only_from_the_playbook(client, admin, player, l
 
     ask(client, play)
 
-    assert "Answer only from the playbook" in llm.system_prompt
+    assert "Answer from the playbook below" in llm.system_prompt
     assert "Never invent" in llm.system_prompt
-    assert "not in the playbook" in llm.system_prompt
+    assert "does not answer the question" in llm.system_prompt
 
 
 def test_asking_changes_nothing_but_the_chat_log(client, admin, player, llm):

@@ -6,3 +6,4 @@ __pycache__/
 instance/
 PROJECT_BRIEF.md
 PROJECT_STARTUP_GUIDE.md
+.claude/settings.local.json

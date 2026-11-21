@@ -63,13 +63,12 @@ def test_only_recently_changed_plays_are_marked_updated(client, admin, player):
 
 
 def test_player_can_open_a_published_play(client, admin, player):
-    play = make_play(admin, title="Horns Flare", coaching_notes="Set the screen and stay still.")
+    play = make_play(admin, title="Horns Flare")
     login(client, "wei")
 
     page = client.get(f"/plays/{play.id}").text
 
     assert "Horns Flare" in page
-    assert "Set the screen and stay still." in page
     # The step data for the court viewer is on the page.
     assert "1 passes to 2 on the wing." in page
     assert "Edit play" not in page
@@ -128,8 +127,10 @@ def test_player_gets_no_new_play_button(client, admin, player):
     make_play(admin)
     login(client, "wei")
 
-    assert "New play" not in client.get("/playbook/offense").text
-    assert "New play" not in client.get("/playbook/baseline").text
+    for category in ["offense", "defense", "sideline", "baseline"]:
+        page = client.get(f"/playbook/{category}").text
+        assert "New play" not in page
+        assert "/admin/plays/new" not in page
 
 
 def test_admin_sees_drafts_in_a_category_marked_as_drafts(client, admin):

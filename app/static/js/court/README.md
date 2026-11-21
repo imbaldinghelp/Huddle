@@ -102,6 +102,11 @@ sizes, the rules above) and rebuilds the diagram from the checked values only.
 **If you change the format here, change that file and its tests
 (`tests/test_play_validation.py`) too.**
 
+The assistant also reads diagrams: `app/assistant/court_text.py` turns each
+step into words for the AI model ("3 cuts to the left block"). It copies the
+court sizes from `court.js`, so update it (and `tests/test_court_text.py`)
+when the format or the court's shape changes.
+
 ## Adding a full court later
 
 Only `court.js` knows the court's shape. To add a full court: draw a second

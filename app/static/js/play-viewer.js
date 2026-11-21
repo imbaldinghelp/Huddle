@@ -33,6 +33,8 @@ let playing = false;
 
 function showStep(index) {
   current = index;
+  // The chat (play-chat.js) reads this to tell the assistant which step is on screen.
+  viewer.dataset.currentStep = String(current + 1);
   const step = steps[current];
   renderDiagram(court.diagram, step.diagram);
   court.svg.setAttribute("aria-label", `Court diagram, step ${current + 1} of ${steps.length}`);

@@ -85,21 +85,6 @@ def steps_data(play):
 # ---------- Writing (admin pages) ----------
 
 
-def count_plays():
-    """How many plays are published and how many are drafts, for the admin overview."""
-    query = select(Play.status, func.count(Play.id)).group_by(Play.status)
-    counts = dict(db.session.execute(query).all())
-    return {
-        "published": counts.get(PlayStatus.PUBLISHED, 0),
-        "drafts": counts.get(PlayStatus.DRAFT, 0),
-    }
-
-
-def list_all_plays():
-    """Every play, drafts included, most recently changed first."""
-    return db.session.scalars(select(Play).order_by(Play.updated_at.desc())).all()
-
-
 def save_play(clean, author, play=None):
     """Create a play, or replace the contents of an existing one.
 
@@ -112,7 +97,6 @@ def save_play(clean, author, play=None):
     play.title = clean["title"]
     play.category = clean["category"]
     play.summary = clean["summary"]
-    play.coaching_notes = clean["coaching_notes"]
     play.status = clean["status"]
     play.updated_at = utc_now()
     # Replacing the whole list deletes the old steps (see Play.steps).

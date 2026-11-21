@@ -1,0 +1,39 @@
+{% extends "shell.html" %}
+{% from "components/breadcrumbs.html" import breadcrumbs %}
+{% from "components/text.html" import count_of %}
+
+{% block title %}Your account | Huddle{% endblock %}
+{% block page_class %} page-narrow{% endblock %}
+
+{% block page_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/account.css') }}">
+{% endblock %}
+
+{% block content %}
+  {{ breadcrumbs([("Playbook", url_for("playbook.index"))], "Your account") }}
+  <h1 class="page-title">Your account</h1>
+
+  <dl class="account-details">
+    <div class="account-row">
+      <dt>Name</dt>
+      <dd>{{ current_user.display_name }}</dd>
+    </div>
+    <div class="account-row">
+      <dt>Username</dt>
+      <dd>{{ current_user.username }}</dd>
+    </div>
+    <div class="account-row">
+      <dt>Role</dt>
+      <dd>{% if current_user.is_admin %}Admin (captain or coach){% else %}Player{% endif %}</dd>
+    </div>
+    <div class="account-row">
+      <dt>Assistant</dt>
+      <dd>{{ count_of(questions_left, "question") }} left today</dd>
+    </div>
+  </dl>
+  <p class="page-note">Your name and username are set by your captain or coach. Ask them if either is wrong.</p>
+
+  <div>
+    <a class="button" href="{{ url_for('auth.change_password') }}">Change password</a>
+  </div>
+{% endblock %}

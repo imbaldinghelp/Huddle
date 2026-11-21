@@ -1,5 +1,5 @@
-/* Admin pages: the overview, the temporary password page and the plays list.
-   The list rows themselves are shared: see "List rows" in ../components.css. */
+/* Admin pages: the temporary password page.
+   The players list uses the shared rows: see "List rows" in ../components.css. */
 
 /* ---------- Temporary password page ---------- */
 
@@ -31,31 +31,4 @@
   font-size: 20px;
   overflow-wrap: anywhere;
   user-select: all;
-}
-
-/* ---------- Overview ---------- */
-
-/* Here the second line explains the section, so it wraps instead of being cut. */
-.overview .row-sub {
-  white-space: normal;
-}
-
-.overview + .page-note {
-  margin-bottom: 0;
-}
-
-/* ---------- Plays list ---------- */
-
-/* A play's title opens the editor. */
-a.row-title {
-  /* Padding makes the link taller to tap; the margin cancels it out so the
-     row keeps its height. */
-  margin: -4px 0;
-  padding: 4px 0;
-  text-decoration: none;
-}
-
-a.row-title:hover {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
 }

@@ -109,13 +109,20 @@ if (chat) {
     }
   }
 
+  // The step the court is showing (1, 2, ...). play-viewer.js keeps it up to
+  // date on the viewer, so "who has the ball now?" is about the right step.
+  function currentStep() {
+    const step = Number(document.querySelector("[data-play-viewer]")?.dataset.currentStep);
+    return Number.isInteger(step) && step > 0 ? step : null;
+  }
+
   // Returns the server's reply as an object, or null if it could not be reached.
   async function askServer(question) {
     try {
       const response = await fetch(chat.dataset.askUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-CSRFToken": chat.dataset.csrfToken },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, step: currentStep() }),
       });
       return await response.json();
     } catch {

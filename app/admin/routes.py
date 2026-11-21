@@ -41,10 +41,9 @@ def show_credentials_once(user, temp_password, heading):
 @admin_bp.route("/")
 @admin_required
 def index():
-    """The overview: what an admin can manage, with the two main actions."""
-    return render_template(
-        "admin/index.html", users=service.count_users(), plays=play_service.count_plays()
-    )
+    # The admin area is only for managing players; plays are managed from
+    # the playbook itself (a category page, then Edit).
+    return redirect(url_for("admin.players"))
 
 
 # ---------- Players ----------
@@ -107,6 +106,8 @@ def change_active_state(user_id, active):
 
 
 # ---------- Plays ----------
+# There is no list of plays here: admins find them in the playbook. These
+# routes are the court editor and the buttons on a category's Edit page.
 
 
 def get_play_or_404(play_id):
@@ -116,12 +117,9 @@ def get_play_or_404(play_id):
     return play
 
 
-@admin_bp.route("/plays")
-@admin_required
-def plays():
-    return render_template(
-        "admin/plays.html", plays=play_service.list_all_plays(), action_form=ConfirmActionForm()
-    )
+def back_to_category(category):
+    """Return to the Edit page of the category the play was in."""
+    return redirect(url_for("playbook.edit_category", slug=category))
 
 
 @admin_bp.route("/plays/new")
@@ -173,9 +171,10 @@ def save_play_from_editor(play):
 
     play = play_service.save_play(clean, author=current_user, play=play)
     # The editor opens the address we send back; the message shows on that page.
+    # A published play goes to its category, where players will find it.
     if play.is_published:
         flash(f"{play.title} is published.", "success")
-        return jsonify(redirect=url_for("admin.plays"))
+        return jsonify(redirect=url_for("playbook.category", slug=play.category))
     flash(f"{play.title} is saved as a draft.", "success")
     return jsonify(redirect=url_for("admin.edit_play", play_id=play.id))
 
@@ -197,7 +196,7 @@ def change_play_status(play_id, status, outcome):
     play = get_play_or_404(play_id)
     play_service.set_status(play, status)
     flash(f"{play.title} {outcome}", "success")
-    return redirect(url_for("admin.plays"))
+    return back_to_category(play.category)
 
 
 @admin_bp.route("/plays/<int:play_id>/delete", methods=["POST"])
@@ -205,7 +204,7 @@ def change_play_status(play_id, status, outcome):
 def delete_play(play_id):
     require_valid_action_form()
     play = get_play_or_404(play_id)
-    title = play.title
+    title, category = play.title, play.category
     play_service.delete_play(play)
     flash(f"{title} has been deleted.", "success")
-    return redirect(url_for("admin.plays"))
+    return back_to_category(category)

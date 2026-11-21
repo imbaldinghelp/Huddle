@@ -4,6 +4,7 @@
 import { svgElement } from "./svg.js";
 
 // Sizes are in decimetres (10 = 1 metre) and follow the FIBA court.
+// app/assistant/court_text.py copies them to name spots ("left wing") for the assistant.
 const COURT_WIDTH = 150;
 const HALF_LENGTH = 140;
 // Space around the lines, so an inbounder can stand out of bounds.

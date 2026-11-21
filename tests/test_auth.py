@@ -108,4 +108,28 @@ def test_header_hides_admin_link_from_players(client, player):
 def test_header_shows_admin_link_to_admins(client, admin):
     login(client, "coach")
 
-    assert 'href="/admin/"' in client.get("/playbook").text
+    assert 'href="/admin/players"' in client.get("/playbook").text
+
+
+# ---------- Account page ----------
+
+
+def test_clicking_your_name_opens_your_account(client, player):
+    login(client, "wei")
+
+    assert 'href="/account"' in client.get("/playbook").text
+    page = client.get("/account").text
+
+    assert "Your account" in page
+    assert "Wei Jie" in page
+    assert "wei" in page
+    assert "Player" in page
+    assert "questions left today" in page
+    assert 'href="/account/password"' in page
+
+
+def test_account_page_needs_a_login(client):
+    response = client.get("/account")
+
+    assert response.status_code == 302
+    assert response.headers["Location"].startswith("/login")

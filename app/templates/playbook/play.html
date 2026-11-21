@@ -22,7 +22,7 @@
     <p class="play-status"><span class="tag tag-muted">Draft</span> Only admins can see this play until it is published.</p>
   {% endif %}
   {% if play.summary %}
-    <p class="page-intro">{{ play.summary }}</p>
+    <p class="page-intro play-summary">{{ play.summary }}</p>
   {% endif %}
 
   <div class="play-layout" data-play-viewer>
@@ -50,13 +50,6 @@
         <li><span class="icon icon-dribble" aria-hidden="true"></span>Dribble</li>
         <li><span class="icon icon-screen" aria-hidden="true"></span>Screen</li>
       </ul>
-
-      {% if play.coaching_notes %}
-        <section class="coaching-notes">
-          <h2 class="notes-title">Coaching notes</h2>
-          <p>{{ play.coaching_notes }}</p>
-        </section>
-      {% endif %}
 
       {# Drafts are not in the playbook yet, so there is nothing to ask about. #}
       {% if play.is_published %}

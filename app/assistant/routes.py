@@ -17,7 +17,8 @@ def ask(play_id):
 
     data = request.get_json(silent=True) or {}
     try:
-        chat = service.ask(current_user, data.get("question"), play)
+        # "step" is the step on screen (1, 2, ...), so "this step" makes sense.
+        chat = service.ask(current_user, data.get("question"), play, data.get("step"))
     except service.AssistantError as problem:
         return jsonify(error=str(problem), **left_today()), 400
     return jsonify(answer=chat.answer, **left_today())

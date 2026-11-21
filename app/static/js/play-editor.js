@@ -22,6 +22,7 @@ const MAX_UNDO = 30;
 // Distances in drawing units (1 unit = 10 cm on a real court).
 const SNAP_DISTANCE = 11; // how near a player a pass or the ball must be dropped
 const MIN_ARROW_LENGTH = 7; // shorter drags are treated as an accidental click
+const STEP_SLIDE_MS = 240; // how long a step takes to slide up or down the list
 
 const TOOL_HINTS = {
   move: "Drag a player to move them. Drag the ball onto a player to change who has it.",
@@ -42,7 +43,6 @@ const fields = {
   title: document.getElementById("play-title"),
   category: document.getElementById("play-category"),
   summary: document.getElementById("play-summary"),
-  coaching_notes: document.getElementById("play-notes"),
 };
 const descriptionField = document.getElementById("step-description");
 const descriptionLabel = editor.querySelector("[data-description-label]");
@@ -53,6 +53,8 @@ const undoButton = editor.querySelector("[data-undo]");
 const defendersBox = editor.querySelector("[data-defenders]");
 const saveButtons = [...editor.querySelectorAll("[data-save]")];
 const saveErrors = editor.querySelector("[data-save-errors]");
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 const court = createCourt();
 court.svg.setAttribute("role", "img");
@@ -150,9 +152,11 @@ function renderStepList() {
     ]);
     select.dataset.stepAction = "select";
 
-    const up = stepButton("Up", `Move step ${number} up`, "up", index === 0);
-    const down = stepButton("Down", `Move step ${number} down`, "down", index === state.steps.length - 1);
+    const up = stepButton(arrowIcon("up"), `Move step ${number} up`, "up", index === 0);
+    const down = stepButton(arrowIcon("down"), `Move step ${number} down`, "down", index === state.steps.length - 1);
     const remove = stepButton("Remove", `Remove step ${number}`, "remove", state.steps.length === 1);
+    up.classList.add("step-move");
+    down.classList.add("step-move");
 
     const item = element("li", { class: "step-item" }, [select, element("div", { class: "step-actions" }, [up, down, remove])]);
     item.dataset.stepIndex = index;
@@ -164,11 +168,38 @@ function renderStepList() {
   stepList.replaceChildren(...items);
 }
 
-function stepButton(text, label, action, disabled) {
-  const button = element("button", { class: "text-button", type: "button", "aria-label": label }, [text]);
+function stepButton(content, label, action, disabled) {
+  const button = element("button", { class: "text-button", type: "button", "aria-label": label }, [content]);
   button.dataset.stepAction = action;
   button.disabled = disabled;
   return button;
+}
+
+function arrowIcon(direction) {
+  return element("span", { class: `icon icon-arrow-${direction}`, "aria-hidden": "true" });
+}
+
+// Where each step row sits on the screen, top edge in pixels.
+function stepTops() {
+  return [...stepList.children].map((item) => item.getBoundingClientRect().top);
+}
+
+// After two steps swap places, slide each row from where it was to where it
+// is now, so the admin can see which way the step went. The list is already
+// in its new order; each row starts shifted back to its old spot and glides home.
+function slideSwappedSteps(oldTops, first, second) {
+  if (reducedMotion.matches) {
+    return;
+  }
+  const newTops = stepTops();
+  // The row now at "first" used to be at "second", and the other way round.
+  for (const [now, before] of [[first, second], [second, first]]) {
+    const shift = oldTops[before] - newTops[now];
+    stepList.children[now].animate([{ transform: `translateY(${shift}px)` }, { transform: "none" }], {
+      duration: STEP_SLIDE_MS,
+      easing: "cubic-bezier(0.2, 0, 0, 1)",
+    });
+  }
 }
 
 // Builds an HTML element: element("p", { class: "note" }, ["Hello"]).
@@ -355,6 +386,8 @@ function onStepListClick(event) {
   const action = button.dataset.stepAction;
   const index = Number(button.closest("[data-step-index]").dataset.stepIndex);
   let focusIndex = index;
+  // Set only when two steps swap, so the move can be animated after redrawing.
+  let oldTops = null;
 
   if (action === "select") {
     state.current = index;
@@ -365,12 +398,16 @@ function onStepListClick(event) {
     focusIndex = Math.min(index, state.steps.length - 1);
   } else {
     const swapWith = action === "up" ? index - 1 : index + 1;
+    oldTops = stepTops();
     remember();
     [state.steps[index], state.steps[swapWith]] = [state.steps[swapWith], state.steps[index]];
     state.current = swapWith;
     focusIndex = swapWith;
   }
   render();
+  if (oldTops) {
+    slideSwappedSteps(oldTops, index, focusIndex);
+  }
   focusStepButton(focusIndex, action);
 }
 
@@ -389,6 +426,13 @@ function onDescriptionInput() {
   }
   currentStep().description = descriptionField.value;
   renderStepList();
+}
+
+// The summary box grows taller to fit its text, line breaks included.
+function fitSummary() {
+  const summary = fields.summary;
+  summary.style.height = "auto";
+  summary.style.height = `${summary.scrollHeight}px`;
 }
 
 function toggleDefenders() {
@@ -411,7 +455,6 @@ async function save(status) {
     title: fields.title.value,
     category: fields.category.value,
     summary: fields.summary.value,
-    coaching_notes: fields.coaching_notes.value,
     status,
     steps: state.steps,
   };
@@ -471,6 +514,9 @@ descriptionField.addEventListener("blur", () => (typingDescription = false));
 for (const field of Object.values(fields)) {
   field.addEventListener("input", () => (unsaved = true));
 }
+fields.summary.addEventListener("input", fitSummary);
+// A narrower window wraps the summary onto more lines.
+window.addEventListener("resize", fitSummary);
 for (const button of saveButtons) {
   button.addEventListener("click", () => save(button.dataset.save));
 }
@@ -494,3 +540,4 @@ window.addEventListener("beforeunload", (event) => {
 
 chooseTool("move");
 render();
+fitSummary();

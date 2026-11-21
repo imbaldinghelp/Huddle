@@ -1,6 +1,7 @@
 from flask import current_app, flash, redirect, render_template, request, session, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
+from app.assistant import service as assistant_service
 from app.auth import auth_bp, service
 from app.auth.forms import ChangePasswordForm, LoginForm, SetPasswordForm
 from app.extensions import limiter
@@ -52,6 +53,15 @@ def logout():
     return redirect(url_for("auth.login"))
 
 
+# Clicking your name in the header opens this page.
+@auth_bp.route("/account")
+@login_required
+def account():
+    return render_template(
+        "auth/account.html", questions_left=assistant_service.questions_left(current_user)
+    )
+
+
 @auth_bp.route("/account/password", methods=["GET", "POST"])
 @login_required
 def change_password():
@@ -60,5 +70,6 @@ def change_password():
     if form.validate_on_submit():
         service.change_password(current_user, form.new_password.data)
         flash("Your password has been changed.", "success")
-        return redirect(url_for("playbook.index"))
+        # A first-time password opens the playbook; a chosen change goes back to the account page.
+        return redirect(url_for("playbook.index" if forced else "auth.account"))
     return render_template("auth/change_password.html", form=form, forced=forced)
